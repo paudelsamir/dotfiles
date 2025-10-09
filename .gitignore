@@ -1,0 +1,24 @@
+*.log
+*.tmp
+*.pid
+*.sock
+*~
+*.bak
+*.backup
+
+# Personal data
+**/user/
+**/data/user/
+clipboard_history.json
+clipse.log
+
+gschemas.compiled
+
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
+
+monitors.conf
+workspaces.conf

@@ -1,0 +1,25 @@
+# Clipse configuration for light, minimal theme
+
+[theme]
+# Light, minimal theme
+use_custom_theme = true
+
+# Colors (light theme)
+background = "#fefefe"
+foreground = "#2d3748"
+selected_background = "#e2e8f0"
+selected_foreground = "#1a202c"
+border = "#cbd5e0"
+title = "#3182ce"
+
+[behavior]
+# Auto-close on focus loss
+auto_close = true
+max_entries = 100
+confirm_clear = false
+
+[display]
+# Minimal, clean display
+show_help = false
+truncate_length = 80
+enable_mouse = true
