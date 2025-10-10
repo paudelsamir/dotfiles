@@ -22,6 +22,7 @@ My Hyprland setup based on end-4/dots-hyprland and quickshell with some producti
 - `Super + tab` - Switch to next workspace
 - `Super + Shift + tab` - Switch to previous workspace
 - `Alt + [1-0]` - Move windows to workspace
+- `Super + Alt + S` - Toggle window to/from scratchpad (hide/show windows)
 - and many more.....
 
 ### Layouts
@@ -39,3 +40,19 @@ My Hyprland setup based on end-4/dots-hyprland and quickshell with some producti
 
 @QUICKSHELL
 - Simply lovely
+
+## Scratchpad Feature
+A super useful feature for managing windows - hide windows you want to keep running but don't need visible all the time!
+
+**How it works:**
+- Press `Super + Alt + S` on any window to send it to the scratchpad (special workspace -99)
+- Press `Super + Alt + S` again while that window is active to bring it back to your current workspace
+- Use `Alt + [1-0]` to move windows to specific workspaces if needed
+
+**Perfect for:**
+- Terminal windows you want to quickly access later
+- Music players or media controls
+- Notes or reference documents
+- Any app you want to temporarily hide without closing
+
+The scratchpad acts as a hidden workspace where windows stay running in the background, ready to be recalled instantly!
