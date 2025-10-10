@@ -1,14 +1,14 @@
-My Hyprland setup based on end-4/dots-hyprland and quickshell with some productive tweaks.
+My Hyprland setup based on end-4/dots and quickshell with some productive tweaks.
 
 ## Key Stuff:
 - GPU monitoring in status bar
 - Network speeds display  
-- Pomodoro /timer
+- Pomodoro /timer /Stopwatch
 - Todo system that persists
 - Monthly goals tracker
-- Better keybinds 
+- Better keybinds(clipboard, screenshots/records ,workspaces)
 - Notifying widgets
-- Minimal Quickshell setup..
+- Minimal and productive Quickshell setup..
 
 ## Key Keybindings
 - `Super + Q` - Close window
@@ -41,18 +41,5 @@ My Hyprland setup based on end-4/dots-hyprland and quickshell with some producti
 @QUICKSHELL
 - Simply lovely
 
-## Scratchpad Feature
-A super useful feature for managing windows - hide windows you want to keep running but don't need visible all the time!
-
-**How it works:**
-- Press `Super + Alt + S` on any window to send it to the scratchpad (special workspace -99)
-- Press `Super + Alt + S` again while that window is active to bring it back to your current workspace
-- Use `Alt + [1-0]` to move windows to specific workspaces if needed
-
-**Perfect for:**
-- Terminal windows you want to quickly access later
-- Music players or media controls
-- Notes or reference documents
-- Any app you want to temporarily hide without closing
-
-The scratchpad acts as a hidden workspace where windows stay running in the background, ready to be recalled instantly!
+@Scratchpad 
+- A super useful feature for managing windows - hide windows you want to keep running but don't need visible all the time!
