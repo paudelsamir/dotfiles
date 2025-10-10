@@ -14,6 +14,9 @@ Singleton {
     property bool sidebarLeftOpen: false
     property bool sidebarRightOpen: false
     property bool mediaControlsOpen: false
+    // Goal countdown popup state & target date
+    property bool countdownPopupOpen: false
+    property string countdownTargetDate: "2025-12-31"
     property bool osdBrightnessOpen: false
     property bool osdVolumeOpen: false
     property bool oskOpen: false

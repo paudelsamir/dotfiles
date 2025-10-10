@@ -12,10 +12,34 @@
 clipboard_history.json
 clipse.log
 
+# Token and credential files
+*token*
+*.key
+*.pem
+*.secret
+*credentials*
+*auth*
+.ssh/
+.config/go/telemetry/
+
+# Browser and application data
+.config/google-chrome/
+.config/chromium/
+.config/BraveSoftware/
+.config/firefox/
+.mozilla/
+.cache/
+.local/share/Trash/
+*history*
+.bash_history
+.zsh_history
+*_history
+
 gschemas.compiled
 
 .DS_Store
 Thumbs.db
+.directory
 
 .vscode/
 .idea/

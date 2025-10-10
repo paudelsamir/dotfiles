@@ -81,6 +81,7 @@ Item { // Bar content region
             id: leftSectionRowLayout
             anchors.fill: parent
             spacing: 10
+            
 
             LeftSidebarButton { // Left sidebar button
                 Layout.alignment: Qt.AlignVCenter
@@ -88,12 +89,60 @@ Item { // Bar content region
                 colBackground: barLeftSideMouseArea.hovered ? Appearance.colors.colLayer1Hover : ColorUtils.transparentize(Appearance.colors.colLayer1Hover, 1)
             }
 
-            ActiveWindow {
-                visible: root.useShortenedForm === 0
-                Layout.rightMargin: Appearance.rounding.screenRounding
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+            Row {
+    Layout.alignment: Qt.AlignVCenter
+    Layout.leftMargin: -90   // push resources more left
+    spacing: 0
+
+                MouseArea {
+                    width: resourcesComponent.width
+                    height: resourcesComponent.height
+                    hoverEnabled: true
+                    
+                    Resources {
+        id: resourcesComponent
+        anchors.centerIn: parent
+        Layout.leftMargin: -10   // tiny nudge left
+        alwaysShowAllResources: root.useShortenedForm === 2
+                        
+                    }
+                    
+                    // Resources hover tooltip or popup
+                    onEntered: {
+                        // Add your Resources hover functionality here
+                    }
+                    onExited: {
+                        // Add your Resources exit functionality here  
+                    }
+                }
+                
+                MouseArea {
+                    width: 60
+                    height: mediaComponent.height
+                    hoverEnabled: true
+                    
+                    Media {
+                        id: mediaComponent
+                        visible: root.useShortenedForm < 5
+                        anchors.centerIn: parent
+                        implicitWidth: 60
+                        Layout.leftMargin: -70 
+                    }
+                    
+                    // Media hover functionality
+                    onEntered: {
+                        // Add your Media hover functionality here
+                    }
+                    onExited: {
+                        // Add your Media exit functionality here
+                    }
+                    onClicked: {
+                        // Add your Media click functionality here
+                        GlobalStates.mediaControlsOpen = !GlobalStates.mediaControlsOpen
+                    }
+                }
             }
+
         }
     }
 
@@ -109,17 +158,15 @@ Item { // Bar content region
         BarGroup {
             id: leftCenterGroup
             anchors.verticalCenter: parent.verticalCenter
-            implicitWidth: root.centerSideModuleWidth
-
-            Resources {
-                alwaysShowAllResources: root.useShortenedForm === 2
-                Layout.fillWidth: root.useShortenedForm === 2
-            }
-
-            Media {
-                visible: root.useShortenedForm < 2
+            implicitWidth: root.centerSideModuleWidth * 0.5
+            ClockWidget {
+                showDate: (Config.options.bar.verbose && root.useShortenedForm < 2)
+                Layout.alignment: Qt.AlignVCenter
                 Layout.fillWidth: true
             }
+
+
+
         }
 
         VerticalBarSeparator {
@@ -155,7 +202,7 @@ Item { // Bar content region
         MouseArea {
             id: rightCenterGroup
             anchors.verticalCenter: parent.verticalCenter
-            implicitWidth: root.centerSideModuleWidth
+            implicitWidth: root.centerSideModuleWidth * 0.5
             implicitHeight: rightCenterGroupContent.implicitHeight
 
             onPressed: {
@@ -164,22 +211,18 @@ Item { // Bar content region
 
             BarGroup {
                 id: rightCenterGroupContent
-                anchors.fill: parent
 
-                ClockWidget {
-                    showDate: (Config.options.bar.verbose && root.useShortenedForm < 2)
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.fillWidth: true
-                }
 
-                UtilButtons {
-                    visible: (Config.options.bar.verbose && root.useShortenedForm === 0)
+                GoalCountdown {
                     Layout.alignment: Qt.AlignVCenter
                 }
 
-                BatteryIndicator {
-                    visible: (root.useShortenedForm < 2 && UPower.displayDevice.isLaptopBattery)
+                // Weather
+                Loader {
                     Layout.alignment: Qt.AlignVCenter
+                    active: Config.options.bar.weather.enable
+
+                    sourceComponent: WeatherBar {}
                 }
             }
         }
@@ -309,26 +352,29 @@ Item { // Bar content region
                 }
             }
 
+
             SysTray {
                 visible: root.useShortenedForm === 0
                 Layout.fillWidth: false
                 Layout.fillHeight: true
                 invertSide: Config?.options.bar.bottom
             }
+            UtilButtons {
+                visible: (Config.options.bar.verbose && root.useShortenedForm === 0)
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 3
+            }
+
+
+            BatteryIndicator {
+                visible: (root.useShortenedForm < 2 && UPower.displayDevice.isLaptopBattery)
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 2
+            }
 
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-            }
-
-            // Weather
-            Loader {
-                Layout.leftMargin: 4
-                active: Config.options.bar.weather.enable
-
-                sourceComponent: BarGroup {
-                    WeatherBar {}
-                }
             }
         }
     }

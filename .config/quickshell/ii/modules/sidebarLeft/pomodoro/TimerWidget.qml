@@ -18,6 +18,9 @@ Item {
     property bool isRunning: false
     property bool isFinished: false
     
+    implicitHeight: contentColumn.implicitHeight
+    implicitWidth: contentColumn.implicitWidth
+    
     function startTimer() {
         totalSeconds = hours * 3600 + minutes * 60 + seconds
         remainingSeconds = totalSeconds
@@ -104,74 +107,75 @@ Item {
         }
     }
     
-    Item {
+    ColumnLayout {
+        id: contentColumn
         anchors.fill: parent
-        anchors.topMargin: 8
-        anchors.leftMargin: 16
-        anchors.rightMargin: 16
+        spacing: 0
         
-        // Time Display (centered and larger)
-        Rectangle {
-            id: timeDisplayContainer
-            anchors {
-                top: parent.top
-                topMargin: 10
-                horizontalCenter: parent.horizontalCenter
-            }
-            width: parent.width * 0.9
-            height: 80
-            radius: Appearance.rounding.normal
-            color: isFinished ? Appearance.colors.colError : 
-                   isRunning ? Appearance.colors.colPrimary : 
-                   Appearance.colors.colLayer2
-            border.width: 1
-            border.color: isFinished ? Appearance.colors.colError : 
-                          isRunning ? Appearance.colors.colPrimary : 
-                          Appearance.colors.colLayer2Border
+        // Fixed spacer to keep circle centered
+        Item {
+            Layout.fillHeight: true
+            Layout.minimumHeight: 20
+        }
+        
+        // Timer circle (like pomodoro)
+        CircularProgress {
+            Layout.alignment: Qt.AlignHCenter
+            lineWidth: 8
+            value: isRunning ? (totalSeconds > 0 ? (totalSeconds - remainingSeconds) / totalSeconds : 0) : 0
+            implicitSize: 200
+            enableAnimation: true
             
-            Behavior on color {
-                ColorAnimation { duration: 300 }
-            }
-            
-            StyledText {
+            ColumnLayout {
                 anchors.centerIn: parent
-                font.pixelSize: 48
-                font.family: "monospace"
-                font.weight: Font.Bold
-                color: isFinished || isRunning ? "white" : Appearance.colors.colOnLayer2
-                text: {
-                    if (isRunning || isFinished) {
-                        return formatTime(remainingSeconds); // Reverse countdown
-                    } else {
-                        return formatTime(hours * 3600 + minutes * 60 + seconds); // Set time
+                spacing: 0
+                
+                StyledText {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: {
+                        if (isRunning || isFinished) {
+                            return formatTime(remainingSeconds)
+                        } else {
+                            return formatTime(hours * 3600 + minutes * 60 + seconds)
+                        }
                     }
+                    font.pixelSize: 40
+                    color: Appearance.m3colors.m3onSurface
                 }
                 
-                Behavior on color {
-                    ColorAnimation { duration: 300 }
+                StyledText {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: isFinished ? Translation.tr("Finished!") : 
+                          isRunning ? Translation.tr("Running") : Translation.tr("Timer")
+                    font.pixelSize: Appearance.font.pixelSize.normal
+                    color: Appearance.colors.colSubtext
                 }
             }
         }
         
-        // Quick Timer Presets (visible when not running)
-        GridLayout {
-            id: quickPresets
-            anchors {
-                top: timeDisplayContainer.bottom
-                bottom: controlButtons.top
-                left: parent.left
-                right: parent.right
-                topMargin: 16
-                bottomMargin: 16
-            }
-            columns: 2
-            rowSpacing: 8
-            columnSpacing: 8
-            visible: !isRunning && !isFinished
+        // Fixed spacer to maintain layout consistency
+        Item {
+            Layout.fillHeight: true
+            Layout.minimumHeight: 20
+        }
+        
+        // Container for presets with fixed height to prevent layout shifts
+        Item {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredHeight: 80
+            Layout.preferredWidth: 200
+            
+            // Quick presets (when not running)
+            GridLayout {
+                anchors.centerIn: parent
+                columns: 4
+                columnSpacing: 4
+                rowSpacing: 4
+                visible: !isRunning && !isFinished
             
             RippleButton {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 35
+                Layout.preferredHeight: 32
+                Layout.preferredWidth: 45
                 colBackground: Appearance.colors.colLayer2
                 colBackgroundHover: Appearance.colors.colLayer2Hover
                 colRipple: Appearance.colors.colLayer2Active
@@ -179,8 +183,8 @@ Item {
                 
                 contentItem: StyledText {
                     horizontalAlignment: Text.AlignHCenter
-                    text: "5 min"
-                    font.pixelSize: Appearance.font.pixelSize.small
+                    text: "5m"
+                    font.pixelSize: Appearance.font.pixelSize.smaller
                     color: Appearance.colors.colOnLayer2
                 }
                 
@@ -188,8 +192,8 @@ Item {
             }
             
             RippleButton {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 35
+                Layout.preferredHeight: 32
+                Layout.preferredWidth: 45
                 colBackground: Appearance.colors.colLayer2
                 colBackgroundHover: Appearance.colors.colLayer2Hover
                 colRipple: Appearance.colors.colLayer2Active
@@ -197,8 +201,8 @@ Item {
                 
                 contentItem: StyledText {
                     horizontalAlignment: Text.AlignHCenter
-                    text: "10 min"
-                    font.pixelSize: Appearance.font.pixelSize.small
+                    text: "10m"
+                    font.pixelSize: Appearance.font.pixelSize.smaller
                     color: Appearance.colors.colOnLayer2
                 }
                 
@@ -206,8 +210,8 @@ Item {
             }
             
             RippleButton {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 35
+                Layout.preferredHeight: 32
+                Layout.preferredWidth: 45
                 colBackground: Appearance.colors.colLayer2
                 colBackgroundHover: Appearance.colors.colLayer2Hover
                 colRipple: Appearance.colors.colLayer2Active
@@ -215,8 +219,8 @@ Item {
                 
                 contentItem: StyledText {
                     horizontalAlignment: Text.AlignHCenter
-                    text: "25 min"
-                    font.pixelSize: Appearance.font.pixelSize.small
+                    text: "25m"
+                    font.pixelSize: Appearance.font.pixelSize.smaller
                     color: Appearance.colors.colOnLayer2
                 }
                 
@@ -224,8 +228,8 @@ Item {
             }
             
             RippleButton {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 35
+                Layout.preferredHeight: 32
+                Layout.preferredWidth: 45
                 colBackground: Appearance.colors.colLayer2
                 colBackgroundHover: Appearance.colors.colLayer2Hover
                 colRipple: Appearance.colors.colLayer2Active
@@ -233,161 +237,112 @@ Item {
                 
                 contentItem: StyledText {
                     horizontalAlignment: Text.AlignHCenter
-                    text: "1 hour"
-                    font.pixelSize: Appearance.font.pixelSize.small
+                    text: "1h"
+                    font.pixelSize: Appearance.font.pixelSize.smaller
                     color: Appearance.colors.colOnLayer2
                 }
                 
                 onClicked: { hours = 1; minutes = 0; seconds = 0 }
             }
             
-            // Custom time adjusters
-            RowLayout {
-                Layout.columnSpan: 2
-                Layout.fillWidth: true
-                spacing: 4
+            // Time adjustment buttons
+            RippleButton {
+                Layout.preferredHeight: 32
+                Layout.preferredWidth: 45
+                colBackground: Appearance.colors.colSecondaryContainer
+                colBackgroundHover: Appearance.colors.colSecondaryContainerHover
+                buttonRadius: Appearance.rounding.small
                 
-                RippleButton {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 30
-                    colBackground: Appearance.colors.colSecondaryContainer
-                    colBackgroundHover: Appearance.colors.colSecondaryContainerHover
-                    buttonRadius: Appearance.rounding.small
-                    
-                    contentItem: StyledText {
-                        horizontalAlignment: Text.AlignHCenter
-                        text: "+1m"
-                        font.pixelSize: Appearance.font.pixelSize.smaller
-                        color: Appearance.colors.colOnSecondaryContainer
-                    }
-                    
-                    onClicked: { minutes = Math.min(minutes + 1, 59) }
+                contentItem: StyledText {
+                    horizontalAlignment: Text.AlignHCenter
+                    text: "+1m"
+                    font.pixelSize: Appearance.font.pixelSize.smaller
+                    color: Appearance.colors.colOnSecondaryContainer
                 }
                 
-                RippleButton {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 30
-                    colBackground: Appearance.colors.colSecondaryContainer
-                    colBackgroundHover: Appearance.colors.colSecondaryContainerHover
-                    buttonRadius: Appearance.rounding.small
-                    
-                    contentItem: StyledText {
-                        horizontalAlignment: Text.AlignHCenter
-                        text: "+5m"
-                        font.pixelSize: Appearance.font.pixelSize.smaller
-                        color: Appearance.colors.colOnSecondaryContainer
+                onClicked: { 
+                    minutes += 1
+                    if (minutes >= 60) {
+                        hours += Math.floor(minutes / 60)
+                        minutes = minutes % 60
                     }
-                    
-                    onClicked: { 
-                        minutes += 5
-                        if (minutes >= 60) {
-                            hours += Math.floor(minutes / 60)
-                            minutes = minutes % 60
-                        }
-                    }
-                }
-                
-                RippleButton {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 30
-                    colBackground: Appearance.colors.colErrorContainer
-                    colBackgroundHover: Appearance.colors.colErrorContainerHover
-                    buttonRadius: Appearance.rounding.small
-                    
-                    contentItem: StyledText {
-                        horizontalAlignment: Text.AlignHCenter
-                        text: "Clear"
-                        font.pixelSize: Appearance.font.pixelSize.smaller
-                        color: Appearance.colors.colOnErrorContainer
-                    }
-                    
-                    onClicked: { hours = 0; minutes = 0; seconds = 0 }
                 }
             }
-        }
-        
-        // Progress indicator (when running)
-        Item {
-            anchors {
-                top: timeDisplayContainer.bottom
-                bottom: controlButtons.top
-                left: parent.left
-                right: parent.right
-                topMargin: 16
-                bottomMargin: 16
-            }
-            visible: isRunning
-            
-            Rectangle {
-                anchors.centerIn: parent
-                width: Math.min(parent.width * 0.8, parent.height * 0.8)
-                height: width
-                radius: width / 2
-                color: "transparent"
-                border.width: 6
-                border.color: Appearance.colors.colLayer2
-                
-                Rectangle {
-                    anchors.centerIn: parent
-                    width: parent.width - 12
-                    height: parent.height - 12
-                    radius: width / 2
-                    color: "transparent"
-                    rotation: -90
-                    
-                    Canvas {
-                        anchors.fill: parent
-                        onPaint: {
-                            var ctx = getContext("2d");
-                            ctx.clearRect(0, 0, width, height);
-                            
-                            // Draw progress arc
-                            var centerX = width / 2;
-                            var centerY = height / 2;
-                            var radius = (width - 8) / 2;
-                            var progress = totalSeconds > 0 ? (totalSeconds - remainingSeconds) / totalSeconds : 0;
-                            var angle = 2 * Math.PI * progress;
-                            
-                            ctx.beginPath();
-                            ctx.arc(centerX, centerY, radius, 0, angle);
-                            ctx.lineWidth = 6;
-                            ctx.strokeStyle = Appearance.colors.colPrimary;
-                            ctx.stroke();
-                        }
-                        
-                        Connections {
-                            target: root
-                            function onRemainingSecondsChanged() {
-                                parent.requestPaint();
-                            }
-                        }
-                    }
-                }
-                
-                // Progress text in center
-                StyledText {
-                    anchors.centerIn: parent
-                    text: totalSeconds > 0 ? Math.round((totalSeconds - remainingSeconds) / totalSeconds * 100) + "%" : "0%"
-                    font.pixelSize: Appearance.font.pixelSize.large
-                    color: Appearance.colors.colPrimary
-                    font.weight: Font.Bold
-                }
-            }
-        }
-        
-        // Control Buttons (bottom like stopwatch)
-        RowLayout {
-            id: controlButtons
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-                bottom: parent.bottom
-                bottomMargin: 6
-            }
-            spacing: 4
             
             RippleButton {
-                Layout.preferredHeight: 35
-                Layout.preferredWidth: 90
+                Layout.preferredHeight: 32
+                Layout.preferredWidth: 45
+                colBackground: Appearance.colors.colSecondaryContainer
+                colBackgroundHover: Appearance.colors.colSecondaryContainerHover
+                buttonRadius: Appearance.rounding.small
+                
+                contentItem: StyledText {
+                    horizontalAlignment: Text.AlignHCenter
+                    text: "+5m"
+                    font.pixelSize: Appearance.font.pixelSize.smaller
+                    color: Appearance.colors.colOnSecondaryContainer
+                }
+                
+                onClicked: { 
+                    minutes += 5
+                    if (minutes >= 60) {
+                        hours += Math.floor(minutes / 60)
+                        minutes = minutes % 60
+                    }
+                }
+            }
+            
+            RippleButton {
+                Layout.preferredHeight: 32
+                Layout.preferredWidth: 45
+                colBackground: Appearance.colors.colSecondaryContainer
+                colBackgroundHover: Appearance.colors.colSecondaryContainerHover
+                buttonRadius: Appearance.rounding.small
+                
+                contentItem: StyledText {
+                    horizontalAlignment: Text.AlignHCenter
+                    text: "-1m"
+                    font.pixelSize: Appearance.font.pixelSize.smaller
+                    color: Appearance.colors.colOnSecondaryContainer
+                }
+                
+                onClicked: { 
+                    if (minutes > 0) {
+                        minutes -= 1
+                    } else if (hours > 0) {
+                        hours -= 1
+                        minutes = 59
+                    }
+                }
+            }
+            
+            RippleButton {
+                Layout.preferredHeight: 32
+                Layout.preferredWidth: 45
+                colBackground: Appearance.colors.colErrorContainer
+                colBackgroundHover: Appearance.colors.colErrorContainerHover
+                buttonRadius: Appearance.rounding.small
+                
+                contentItem: StyledText {
+                    horizontalAlignment: Text.AlignHCenter
+                    text: "Clear"
+                    font.pixelSize: Appearance.font.pixelSize.smaller
+                    color: Appearance.colors.colOnErrorContainer
+                }
+                
+                onClicked: { hours = 0; minutes = 0; seconds = 0 }
+            }
+        }
+        }
+        
+        // Control buttons (like pomodoro)
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+            spacing: 10
+            
+            RippleButton {
+                implicitHeight: 35
+                implicitWidth: 90
                 font.pixelSize: Appearance.font.pixelSize.larger
                 enabled: !isRunning && !isFinished && (hours > 0 || minutes > 0 || seconds > 0)
                 
@@ -396,18 +351,18 @@ Item {
                 colRipple: isRunning ? Appearance.colors.colSecondaryContainerActive : Appearance.colors.colPrimaryActive
                 
                 contentItem: StyledText {
+                    anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
-                    color: isRunning ? Appearance.colors.colOnSecondaryContainer : Appearance.colors.colOnPrimary
                     text: isRunning ? Translation.tr("Pause") : remainingSeconds === 0 ? Translation.tr("Start") : Translation.tr("Resume")
+                    color: isRunning ? Appearance.colors.colOnSecondaryContainer : Appearance.colors.colOnPrimary
                 }
                 
                 onClicked: isRunning ? pauseTimer() : startTimer()
-                visible: !isFinished
             }
             
             RippleButton {
-                Layout.preferredHeight: 35
-                Layout.preferredWidth: 90
+                implicitHeight: 35
+                implicitWidth: 90
                 font.pixelSize: Appearance.font.pixelSize.larger
                 enabled: isRunning || isFinished || remainingSeconds > 0
                 
@@ -416,6 +371,7 @@ Item {
                 colRipple: Appearance.colors.colErrorContainerActive
                 
                 contentItem: StyledText {
+                    anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
                     text: Translation.tr("Reset")
                     color: Appearance.colors.colOnErrorContainer

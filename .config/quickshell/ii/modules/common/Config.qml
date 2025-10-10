@@ -156,7 +156,7 @@ Singleton {
                 property bool bottom: false // Instead of top
                 property int cornerStyle: 0 // 0: Hug | 1: Float | 2: Plain rectangle
                 property bool borderless: false // true for no grouping of items
-                property string topLeftIcon: "spark" // Options: "distro" or any icon name in ~/.config/quickshell/ii/assets/icons
+                property string topLeftIcon: "arch" // Options: "distro" or any icon name in ~/.config/quickshell/ii/assets/icons
                 property bool showBackground: true
                 property bool verbose: true
                 property bool vertical: false
