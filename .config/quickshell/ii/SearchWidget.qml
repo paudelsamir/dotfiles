@@ -138,13 +138,23 @@ Item { // Wrapper
     Process {
         id: mathProcess
         property list<string> baseCommand: ["qalc", "-t"]
+        // Track the expression currently being evaluated so UI can show
+        // a live "Calculating..." state and avoid showing stale results.
+        property string lastExpression: ""
+        property string lastCalculatedExpression: ""
         function calculateExpression(expression) {
             mathProcess.running = false;
+            mathProcess.lastExpression = expression;
             mathProcess.command = baseCommand.concat(expression);
             mathProcess.running = true;
         }
         stdout: SplitParser {
             onRead: data => {
+                // Mark that the lastExpression was calculated and update
+                // the visible math result. This helps avoid races where the
+                // UI displays an old result while a new calculation is in
+                // progress.
+                mathProcess.lastCalculatedExpression = mathProcess.lastExpression;
                 root.mathResult = data;
                 root.focusFirstItem();
             }
@@ -268,6 +278,26 @@ Item { // Wrapper
 
                     onTextChanged: {
                         root.searchingText = text;
+                        // If the user is typing a math expression, trigger
+                        // calculation immediately so results appear live.
+                        // We detect math-like input when it starts with the
+                        // math prefix or a digit/parenthesis/operator.
+                        try {
+                            let expr = text;
+                            if (expr.startsWith(Config.options.search.prefix.math)) {
+                                expr = expr.slice(Config.options.search.prefix.math.length);
+                            }
+                            // Simple heuristic for math input: starts with a
+                            // digit, decimal point, parenthesis, or unary
+                            // +/-. This keeps normal text searches debounced.
+                            if (/^\s*[0-9\.\(\+\-]/.test(expr)) {
+                                mathProcess.calculateExpression(expr);
+                            }
+                        } catch (e) {
+                            // Defensive: don't let an exception break search flow
+                            console.log('math trigger error', e);
+                        }
+
                         searchDebounceTimer.restart();
                     }
 
@@ -401,19 +431,38 @@ Item { // Wrapper
                                 };
                             }).filter(Boolean);
                         }
-
                         ////////////////// Init ///////////////////
                         nonAppResultsTimer.restart();
+                        // Determine the expression string we're interested in
+                        // and only show the math result if it corresponds to
+                        // the last calculated expression. Otherwise show a
+                        // calculating placeholder so the user doesn't get
+                        // a stale result.
+                        let exprForMath = root.searchingText;
+                        if (exprForMath.startsWith(Config.options.search.prefix.math)) {
+                            exprForMath = exprForMath.slice(Config.options.search.prefix.math.length);
+                        }
+                        // Only show the math result when it corresponds to the
+                        // last-calculated expression. Otherwise present a
+                        // calculating placeholder so the UI doesn't appear
+                        // stuck on an old value.
+                        const exprTrimmed = exprForMath.trim();
+                        const mathIsForExpr = mathProcess.lastCalculatedExpression.trim() === exprTrimmed;
+                        const mathResultName = mathIsForExpr && root.mathResult ? root.mathResult : Translation.tr("Calculating...");
                         const mathResultObject = {
-                            name: root.mathResult,
+                            name: mathResultName,
                             clickActionName: Translation.tr("Copy"),
                             type: Translation.tr("Math result"),
                             fontType: "monospace",
                             materialSymbol: 'calculate',
                             execute: () => {
-                                Quickshell.clipboardText = root.mathResult;
+                                // Only copy if we actually have a result for the
+                                // current expression.
+                                if (mathIsForExpr && root.mathResult)
+                                    Quickshell.clipboardText = root.mathResult;
                             }
                         };
+
                         const commandResultObject = {
                             name: searchingText.replace("file://", ""),
                             clickActionName: Translation.tr("Run"),
@@ -425,7 +474,18 @@ Item { // Wrapper
                                 if (cleanedCommand.startsWith(Config.options.search.prefix.shellCommand)) {
                                     cleanedCommand = cleanedCommand.slice(Config.options.search.prefix.shellCommand.length);
                                 }
-                                Quickshell.execDetached(["bash", "-c", searchingText.startsWith('sudo') ? `${Config.options.apps.terminal} fish -C '${cleanedCommand}'` : cleanedCommand]);
+                                // Always launch the command inside the configured
+                                // terminal so programs that write to stdout (like
+                                // neofetch) are visible to the user. Escape single
+                                // quotes to avoid breaking the shell invocation.
+                                const safe = cleanedCommand.replace(/'/g, "'\\''");
+                                // Use the configured terminal to run a shell that
+                                // executes the command. Keep same behaviour for
+                                // sudo-prefixed commands.
+                                const terminalInvocation = searchingText.startsWith('sudo')
+                                    ? (Config.options.apps.terminal + " fish -C '" + safe + "'")
+                                    : (Config.options.apps.terminal + " fish -C '" + safe + "'");
+                                Quickshell.execDetached(["bash", "-c", terminalInvocation]);
                             }
                         };
                         const webSearchResultObject = {
