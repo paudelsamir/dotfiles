@@ -10,26 +10,55 @@ import Quickshell
 Item {
     id: root
     
-    // Persistent storage for countdown date
+    // Persistent storage for countdown date and events
     Settings {
         id: countdownSettings
         property string targetDate: "2025-12-31"
         property string lastCheckedDate: ""
+        property string eventsJson: "[]" // JSON array of events: [{name, date, category}]
     }
     
-    // Current target date
+    // Current target date (main goal)
     property string targetDate: countdownSettings.targetDate
     
-    // Calculate days remaining
+    // Parse events from JSON
+    property var events: {
+        try {
+            return JSON.parse(countdownSettings.eventsJson);
+        } catch(e) {
+            return [];
+        }
+    }
+    
+    // Get upcoming events sorted by date
+    function getUpcomingEvents() {
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        var upcoming = events.filter(function(event) {
+            var eventDate = new Date(event.date);
+            return eventDate >= today;
+        }).sort(function(a, b) {
+            return new Date(a.date) - new Date(b.date);
+        });
+        
+        return upcoming;
+    }
+    
+    // Calculate days remaining with improved accuracy
     property int daysLeft: {
+        // Get dates and normalize to UTC midnight
         var today = new Date()
-        today.setHours(0, 0, 0, 0) // Normalize to start of day
+        today = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()))
         
         var target = new Date(targetDate)
-        target.setHours(0, 0, 0, 0) // Normalize to start of day
+        target = new Date(Date.UTC(target.getFullYear(), target.getMonth(), target.getDate()))
         
-        var diff = Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-        return Math.max(0, diff) // Never show negative days
+        // Calculate difference in days
+        var timeDiff = target.getTime() - today.getTime()
+        var daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24))
+        
+        return Math.max(0, daysDiff) // Never show negative days
     }
     
     // Daily update checker
@@ -59,8 +88,9 @@ Item {
     // Initialize on component creation
     Component.onCompleted: {
         checkForNewDay()
-        // Update GlobalStates to match our stored value
+        // Update GlobalStates to match our stored values
         GlobalStates.countdownTargetDate = countdownSettings.targetDate
+        GlobalStates.countdownEventsJson = countdownSettings.eventsJson
     }
     
     // Listen for changes from popup and save them
@@ -72,12 +102,18 @@ Item {
                 root.targetDate = GlobalStates.countdownTargetDate
             }
         }
+        function onCountdownEventsJsonChanged() {
+            if (GlobalStates.countdownEventsJson !== countdownSettings.eventsJson) {
+                countdownSettings.eventsJson = GlobalStates.countdownEventsJson
+            }
+        }
     }
     
     implicitWidth: rowLayout.implicitWidth
     implicitHeight: Appearance.sizes.barHeight
 
     MouseArea {
+        id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
         
@@ -90,32 +126,30 @@ Item {
     RowLayout {
         id: rowLayout
         anchors.centerIn: parent
-        spacing: 6
+        spacing: 4
 
         // Clock icon
-        StyledText {
-            font.family: "Material Symbols Rounded"
-            font.pixelSize: Appearance.font.pixelSize.large
-            color: Appearance.colors.colOnLayer1
+        MaterialSymbol {
+            font.weight: Font.Normal
+            fill: 0
             text: "schedule"
+            iconSize: Appearance.font.pixelSize.small
+            color: Appearance.colors.colOnSurfaceVariant
         }
 
         // Days text  
         StyledText {
             font.pixelSize: Appearance.font.pixelSize.small
-            color: Appearance.colors.colOnLayer1
-            text: root.daysLeft > 0 ? root.daysLeft + "d" : "Done"
+            color: Appearance.colors.colOnSurfaceVariant
+            text: root.daysLeft > 0 ? root.daysLeft + "d" : "0d"
         }
     }
 
-    // Click feedback effect
-    Rectangle {
-        anchors.fill: parent
-        radius: 4
-        color: parent.pressed ? "rgba(255,255,255,0.2)" : 
-               parent.containsMouse ? "rgba(255,255,255,0.1)" : "transparent"
-        Behavior on color {
-            ColorAnimation { duration: 150 }
-        }
+    // Hover tooltip showing all upcoming events
+    CountdownTooltip {
+        hoverTarget: mouseArea
+        targetDate: root.targetDate
+        daysLeft: root.daysLeft
+        events: root.getUpcomingEvents()
     }
 }

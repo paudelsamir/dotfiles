@@ -8,6 +8,7 @@ import Quickshell
 
 StyledPopup {
     id: root
+    popupBackgroundMargin: 50
 
     // Helper function to format KB to GB
     function formatKB(kb) {
@@ -128,18 +129,33 @@ StyledPopup {
 
         Column {
             anchors.top: parent.top
-            spacing: 8
+            spacing: 5
 
             ResourceHeaderItem {
                 icon: "planner_review"
                 label: "CPU"
             }
             Column {
-                spacing: 4
+                spacing: 3
                 ResourceItem {
                     icon: "bolt"
                     label: Translation.tr("Load:")
                     value: (ResourceUsage.cpuUsage > 0.8 ? Translation.tr("High") : ResourceUsage.cpuUsage > 0.4 ? Translation.tr("Medium") : Translation.tr("Low")) + ` (${Math.round(ResourceUsage.cpuUsage * 100)}%)`
+                }
+            }
+
+            ResourceHeaderItem {
+                visible: ResourceUsage.gpuUsage >= 0
+                icon: "monitoring"
+                label: "GPU"
+            }
+            Column {
+                visible: ResourceUsage.gpuUsage >= 0
+                spacing: 2
+                ResourceItem {
+                    icon: "bolt"
+                    label: Translation.tr("Load:")
+                    value: (ResourceUsage.gpuUsage > 0.8 ? Translation.tr("High") : ResourceUsage.gpuUsage > 0.4 ? Translation.tr("Medium") : Translation.tr("Low")) + ` (${Math.round(ResourceUsage.gpuUsage * 100)}%)`
                 }
             }
         }

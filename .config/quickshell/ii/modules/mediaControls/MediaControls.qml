@@ -123,7 +123,7 @@ Scope {
             margins {
                 top: Config.options.bar.vertical ? ((mediaControlsRoot.screen.height / 2) - widgetHeight * 1.5) : Appearance.sizes.barHeight
                 bottom: Appearance.sizes.barHeight
-                left: Config.options.bar.vertical ? Appearance.sizes.barHeight : ((mediaControlsRoot.screen.width / 2) - (osdWidth / 2) - widgetWidth)
+                left: Config.options.bar.vertical ? Appearance.sizes.barHeight : ((mediaControlsRoot.screen.width / 2) - (osdWidth / 2) - widgetWidth - 240)
                 right: Appearance.sizes.barHeight
             }
 

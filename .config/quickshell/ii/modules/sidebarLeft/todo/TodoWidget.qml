@@ -14,6 +14,8 @@ Item {
     property int dialogMargins: 20
     property int fabSize: 48
     property int fabMargins: 14
+    property int todoCount: Todo.list.filter(item => !item.done).length
+    property int doneCount: Todo.list.filter(item => item.done).length
 
     Keys.onPressed: (event) => {
         if ((event.key === Qt.Key_PageDown || event.key === Qt.Key_PageUp) && event.modifiers === Qt.NoModifier) {
@@ -133,7 +135,7 @@ Item {
             TaskList {
                 listBottomPadding: root.fabSize + root.fabMargins * 2
                 emptyPlaceholderIcon: "check_circle"
-                emptyPlaceholderText: Translation.tr("Nothing here!")
+                emptyPlaceholderText: Translation.tr("All tasks done")
                 taskList: Todo.list
                     .map(function(item, i) { return Object.assign({}, item, {originalIndex: i}); })
                     .filter(function(item) { return !item.done; })
@@ -141,7 +143,7 @@ Item {
             TaskList {
                 listBottomPadding: root.fabSize + root.fabMargins * 2
                 emptyPlaceholderIcon: "checklist"
-                emptyPlaceholderText: Translation.tr("Finished tasks will go here")
+                emptyPlaceholderText: Translation.tr("Complete tasks will appear here")
                 taskList: Todo.list
                     .map(function(item, i) { return Object.assign({}, item, {originalIndex: i}); })
                     .filter(function(item) { return item.done; })

@@ -81,8 +81,7 @@ ShellRoot {
     LazyLoader { active: enableSidebarRight; component: SidebarRight {} }
     LazyLoader { active: enableVerticalBar && Config.ready && Config.options.bar.vertical; component: VerticalBar {} }
     LazyLoader { active: enableWallpaperSelector; component: WallpaperSelector {} }
-
-
+    
+    // Add the countdown popup
     CountdownPopup {}
 }
-

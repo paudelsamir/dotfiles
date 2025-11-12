@@ -17,6 +17,7 @@ Singleton {
     // Goal countdown popup state & target date
     property bool countdownPopupOpen: false
     property string countdownTargetDate: "2025-12-31"
+    property string countdownEventsJson: "[]"
     property bool osdBrightnessOpen: false
     property bool osdVolumeOpen: false
     property bool oskOpen: false

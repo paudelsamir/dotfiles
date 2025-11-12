@@ -38,7 +38,7 @@ LazyLoader {
                 if (!Config.options.bar.vertical) return root.QsWindow?.mapFromItem(
                     root.hoverTarget, 
                     (root.hoverTarget.width - popupBackground.implicitWidth) / 2, 0
-                ).x;
+                ).x + root.popupBackgroundMargin;
                 return Appearance.sizes.verticalBarWidth
             }
             top: {
@@ -60,7 +60,7 @@ LazyLoader {
 
         Rectangle {
             id: popupBackground
-            readonly property real margin: 10
+            readonly property real margin: 6
             anchors {
                 fill: parent
                 leftMargin: Appearance.sizes.elevationMargin + root.popupBackgroundMargin * (!popupWindow.anchors.left)

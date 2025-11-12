@@ -47,7 +47,7 @@ Item {
         anchors.centerIn: parent
         lineWidth: Appearance.rounding.unsharpen
         value: activePlayer?.position / activePlayer?.length
-        implicitSize: 20
+        implicitSize: 18
         colPrimary: Appearance.colors.colOnSecondaryContainer
         enableAnimation: false
 

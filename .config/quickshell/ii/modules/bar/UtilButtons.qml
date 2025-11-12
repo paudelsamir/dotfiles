@@ -30,7 +30,7 @@ Item {
                     horizontalAlignment: Qt.AlignHCenter
                     fill: 1
                     text: "screenshot_region"
-                    iconSize: Appearance.font.pixelSize.large
+                    iconSize: Appearance.font.pixelSize.normal
                     color: Appearance.colors.colOnLayer2
                 }
             }
@@ -46,7 +46,7 @@ Item {
                     horizontalAlignment: Qt.AlignHCenter
                     fill: 1
                     text: "colorize"
-                    iconSize: Appearance.font.pixelSize.large
+                    iconSize: Appearance.font.pixelSize.normal
                     color: Appearance.colors.colOnLayer2
                 }
             }
@@ -62,7 +62,7 @@ Item {
                     horizontalAlignment: Qt.AlignHCenter
                     fill: 0
                     text: "keyboard"
-                    iconSize: Appearance.font.pixelSize.large
+                    iconSize: Appearance.font.pixelSize.normal
                     color: Appearance.colors.colOnLayer2
                 }
             }
@@ -78,7 +78,7 @@ Item {
                     horizontalAlignment: Qt.AlignHCenter
                     fill: 0
                     text: Pipewire.defaultAudioSource?.audio?.muted ? "mic_off" : "mic"
-                    iconSize: Appearance.font.pixelSize.large
+                    iconSize: Appearance.font.pixelSize.normal
                     color: Appearance.colors.colOnLayer2
                 }
             }
@@ -100,7 +100,7 @@ Item {
                     horizontalAlignment: Qt.AlignHCenter
                     fill: 0
                     text: Appearance.m3colors.darkmode ? "light_mode" : "dark_mode"
-                    iconSize: Appearance.font.pixelSize.large
+                    iconSize: Appearance.font.pixelSize.normal
                     color: Appearance.colors.colOnLayer2
                 }
             }
@@ -133,7 +133,7 @@ Item {
                         case PowerProfile.Balanced: return "settings_slow_motion"
                         case PowerProfile.Performance: return "local_fire_department"
                     }
-                    iconSize: Appearance.font.pixelSize.large
+                    iconSize: Appearance.font.pixelSize.normal
                     color: Appearance.colors.colOnLayer2
                 }
             }

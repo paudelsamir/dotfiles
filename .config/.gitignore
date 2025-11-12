@@ -1,0 +1,88 @@
+# Sensitive/Personal Data
+*.log
+*.pid
+*.sock
+*-journal
+*-wal
+
+# Cache and temporary files
+Cache/
+CachedData/
+CachedExtensions*/
+CachedProfiles*/
+Crashpad/
+GPUCache/
+Local Storage/
+Service Worker/
+Session Storage/
+WebStorage/
+Shared Dictionary/
+DawnGraphiteCache/
+DawnWebGPUCache/
+Code Cache/
+blob_storage/
+Dictionaries/
+
+# Application specific
+BraveSoftware/
+Code/
+GitHub Desktop/
+Notion/
+vesktop/
+spotify/
+go/env
+pulse/
+session/
+systemd/user/
+yay/
+
+# Personal files that shouldn't be shared
+user-dirs.dirs
+user-dirs.locale
+accounts.db*
+Cookies*
+Preferences
+Network Persistent State
+Trust Tokens*
+SharedStorage*
+TransportSecurity
+window-state.json
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Temporary/log files
+*.tmp
+clipse/clipboard_history.json
+clipse/clipse.log
+install.log
+
+# Build artifacts
+gschemas.compiled
+
+# Personal data directories
+file/home/
+libreoffice/*/user/uno_packages/
+libreoffice/*/user/config/soffice.cfg/
+libreoffice/*/user/pack/config/soffice.cfg/
+
+# KDE/Qt specific personal data
+kdeglobals
+kconf_updaterc
+kactivitymanagerdrc
+kglobalshortcutsrc
+kwinoutputconfig.json
+baloofileinformationrc
+baloofilerc
+Trolltech.conf
+QtProject.conf
+trashrc
+kritadisplayrc
+kritarc
+
+# Downloads and assets that were copied from original
+Downloads/
+JetBrainsMono.zip*
+*.zip

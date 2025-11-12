@@ -13,43 +13,29 @@ MouseArea {
 
     RowLayout {
         id: rowLayout
-
-        spacing: 0
+        spacing: 4
         anchors.fill: parent
-        anchors.leftMargin: 4
-        anchors.rightMargin: 4
+        anchors.leftMargin: 1
+        anchors.rightMargin: 1
+
+        Resource {
+            iconName: "memory"
+            percentage: ResourceUsage.memoryUsedPercentage
+            warningThreshold: Config.options.bar.resources.memoryWarningThreshold
+        }
+
+        Resource {
+            iconName: "graphic_eq"
+            percentage: ResourceUsage.gpuUsage >= 0 ? ResourceUsage.gpuUsage : 0
+            shown: true  // Always show GPU for testing
+            warningThreshold: Config.options.bar.resources.gpuWarningThreshold || 90
+        }
 
         NetworkDownloadResource {
             shown: Config.options.bar.resources.alwaysShowNetwork || 
                 !(MprisController.activePlayer?.trackTitle?.length > 0) ||
                 root.alwaysShowAllResources
         }
-
-        Resource {
-            iconName: "memory"
-            percentage: ResourceUsage.memoryUsedPercentage
-            warningThreshold: Config.options.bar.resources.memoryWarningThreshold
-            Layout.leftMargin: 6
-        }
-
-        Resource {
-            iconName: "planner_review"
-            percentage: ResourceUsage.cpuUsage
-            shown: Config.options.bar.resources.alwaysShowCpu || 
-                !(MprisController.activePlayer?.trackTitle?.length > 0) ||
-                root.alwaysShowAllResources
-            Layout.leftMargin: shown ? 6 : 0
-            warningThreshold: Config.options.bar.resources.cpuWarningThreshold
-        }
-
-        Resource {
-            iconName: "monitoring"
-            percentage: ResourceUsage.gpuUsage >= 0 ? ResourceUsage.gpuUsage : 0
-            shown: true  // Always show GPU for testing
-            Layout.leftMargin: 6
-            warningThreshold: Config.options.bar.resources.gpuWarningThreshold || 90
-        }
-
     }
 
     ResourcesPopup {

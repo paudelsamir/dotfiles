@@ -36,11 +36,16 @@ Singleton {
     }
 
     function formatNetworkSpeed(bytesPerSecond) {
-        // Format with fixed width for consistent display - no decimals to prevent icon overlap
-        if (bytesPerSecond < 1024) return (bytesPerSecond).toFixed(0).padStart(3) + "B/s"
-        if (bytesPerSecond < 1024 * 1024) return (bytesPerSecond / 1024).toFixed(0).padStart(3) + "K/s"
-        if (bytesPerSecond < 1024 * 1024 * 1024) return (bytesPerSecond / (1024 * 1024)).toFixed(0).padStart(3) + "M/s"
-        return (bytesPerSecond / (1024 * 1024 * 1024)).toFixed(0).padStart(3) + "G/s"
+        // Format with padding: 1 digit = "01", 2 digits = "12", 3 digits = "123"
+        const padNumber = (num) => {
+            const rounded = num.toFixed(0);
+            return rounded.length === 1 ? '0' + rounded : rounded;
+        };
+        
+        if (bytesPerSecond < 1024) return padNumber(bytesPerSecond) + "B/s";
+        if (bytesPerSecond < 1024 * 1024) return padNumber(bytesPerSecond / 1024) + "K/s";
+        if (bytesPerSecond < 1024 * 1024 * 1024) return padNumber(bytesPerSecond / (1024 * 1024)) + "M/s";
+        return padNumber(bytesPerSecond / (1024 * 1024 * 1024)) + "G/s";
     }
 
 	Timer {

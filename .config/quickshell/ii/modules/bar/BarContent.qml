@@ -77,22 +77,18 @@ Item { // Bar content region
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        RowLayout {
-            id: leftSectionRowLayout
-            anchors.fill: parent
-            spacing: 10
-            
+        LeftSidebarButton { // Left sidebar button
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: Appearance.rounding.screenRounding
+            colBackground: barLeftSideMouseArea.hovered ? Appearance.colors.colLayer1Hover : ColorUtils.transparentize(Appearance.colors.colLayer1Hover, 1)
+        }
 
-            LeftSidebarButton { // Left sidebar button
-                Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: Appearance.rounding.screenRounding
-                colBackground: barLeftSideMouseArea.hovered ? Appearance.colors.colLayer1Hover : ColorUtils.transparentize(Appearance.colors.colLayer1Hover, 1)
-            }
-
-            Row {
-    Layout.alignment: Qt.AlignVCenter
-    Layout.leftMargin: -90   // push resources more left
-    spacing: 0
+        Row {
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: Appearance.rounding.screenRounding + 45
+            spacing: 8
 
                 MouseArea {
                     width: resourcesComponent.width
@@ -102,7 +98,6 @@ Item { // Bar content region
                     Resources {
         id: resourcesComponent
         anchors.centerIn: parent
-        Layout.leftMargin: -10   // tiny nudge left
         alwaysShowAllResources: root.useShortenedForm === 2
                         
                     }
@@ -126,7 +121,6 @@ Item { // Bar content region
                         visible: root.useShortenedForm < 5
                         anchors.centerIn: parent
                         implicitWidth: 60
-                        Layout.leftMargin: -70 
                     }
                     
                     // Media hover functionality
@@ -141,8 +135,6 @@ Item { // Bar content region
                         GlobalStates.mediaControlsOpen = !GlobalStates.mediaControlsOpen
                     }
                 }
-            }
-
         }
     }
 
@@ -316,7 +308,7 @@ Item { // Bar content region
                         }
                         MaterialSymbol {
                             text: "volume_off"
-                            iconSize: Appearance.font.pixelSize.larger
+                            iconSize: Appearance.font.pixelSize.normal
                             color: rightSidebarButton.colText
                         }
                     }
@@ -329,7 +321,7 @@ Item { // Bar content region
                         }
                         MaterialSymbol {
                             text: "mic_off"
-                            iconSize: Appearance.font.pixelSize.larger
+                            iconSize: Appearance.font.pixelSize.normal
                             color: rightSidebarButton.colText
                         }
                     }
@@ -341,12 +333,12 @@ Item { // Bar content region
                     MaterialSymbol {
                         Layout.rightMargin: indicatorsRowLayout.realSpacing
                         text: Network.materialSymbol
-                        iconSize: Appearance.font.pixelSize.larger
+                        iconSize: Appearance.font.pixelSize.normal
                         color: rightSidebarButton.colText
                     }
                     MaterialSymbol {
                         text: BluetoothStatus.connected ? "bluetooth_connected" : BluetoothStatus.enabled ? "bluetooth" : "bluetooth_disabled"
-                        iconSize: Appearance.font.pixelSize.larger
+                        iconSize: Appearance.font.pixelSize.normal
                         color: rightSidebarButton.colText
                     }
                 }

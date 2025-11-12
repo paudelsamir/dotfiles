@@ -10,19 +10,20 @@ import Quickshell
 Item {
     id: root
     
-    property int hours: 0
-    property int minutes: 5
-    property int seconds: 0
+    property int hours: 1
+    property int minutes: 0
     property int totalSeconds: 0
     property int remainingSeconds: 0
     property bool isRunning: false
     property bool isFinished: false
+    property bool showSettings: false
+    property bool isPaused: false
     
-    implicitHeight: contentColumn.implicitHeight
-    implicitWidth: contentColumn.implicitWidth
+    Layout.fillWidth: true
+    Layout.fillHeight: true
     
     function startTimer() {
-        totalSeconds = hours * 3600 + minutes * 60 + seconds
+        totalSeconds = hours * 3600 + minutes * 60
         remainingSeconds = totalSeconds
         if (remainingSeconds > 0) {
             isRunning = true
@@ -41,6 +42,8 @@ Item {
         isFinished = false
         countdownTimer.stop()
         remainingSeconds = 0
+        showSettings = false
+        isPaused = false
     }
     
     function formatTime(totalSec) {
@@ -54,41 +57,7 @@ Item {
     }
     
     function playAlertSound() {
-        // Play multiple alert sounds for better attention
         Quickshell.execDetached(["paplay", "/usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga"])
-        // Fallback sounds if the first doesn't exist
-        Quickshell.execDetached(["paplay", "/usr/share/sounds/freedesktop/stereo/complete.oga"])
-        Quickshell.execDetached(["paplay", "/usr/share/sounds/freedesktop/stereo/bell.oga"])
-        // System beep as final fallback
-        Quickshell.execDetached(["speaker-test", "-t", "sine", "-f", "1000", "-l", "1"])
-    }
-    
-    function showNotification(title, message) {
-        // Minimal notification with high urgency and longer duration
-        Quickshell.execDetached([
-            "notify-send", 
-            "--urgency=critical",
-            "--expire-time=10000",
-            "--icon=appointment-soon",
-            "--category=timer",
-            "--hint=string:desktop-entry:timer",
-            title, 
-            message
-        ])
-        
-        // Also try with dunst-specific options for minimal style
-        Quickshell.execDetached([
-            "notify-send",
-            "-u", "critical",
-            "-t", "10000",
-            "-i", "clock",
-            "-c", "timer",
-            "-h", "string:bgcolor:#1e1e2e",
-            "-h", "string:fgcolor:#cdd6f4",
-            "-h", "int:value:100",
-            title,
-            message
-        ])
     }
     
     Timer {
@@ -102,282 +71,297 @@ Item {
                 isRunning = false
                 isFinished = true
                 playAlertSound()
-                showNotification("Timer Finished!", "Your timer has completed.")
             }
         }
     }
     
-    ColumnLayout {
-        id: contentColumn
-        anchors.fill: parent
-        spacing: 0
-        
-        // Fixed spacer to keep circle centered
-        Item {
-            Layout.fillHeight: true
-            Layout.minimumHeight: 20
+    Item {
+        anchors {
+            fill: parent
+            topMargin: 8
+            leftMargin: 16
+            rightMargin: 16
         }
         
-        // Timer circle (like pomodoro)
-        CircularProgress {
+        // Timer display
+        RowLayout {
+            id: timerDisplay
+            anchors {
+                top: parent.top
+                topMargin: 20
+                horizontalCenter: parent.horizontalCenter
+            }
+            spacing: 0
             Layout.alignment: Qt.AlignHCenter
-            lineWidth: 8
-            value: isRunning ? (totalSeconds > 0 ? (totalSeconds - remainingSeconds) / totalSeconds : 0) : 0
-            implicitSize: 200
+            
+            StyledText {
+                font.pixelSize: 40
+                color: root.isFinished ? "#d34d3d" : Appearance.m3colors.m3onSurface
+                text: {
+                    if (root.isRunning || root.isFinished) {
+                        let totalSeconds = root.remainingSeconds
+                        let hours = Math.floor(totalSeconds / 3600).toString().padStart(2, '0')
+                        let minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0')
+                        let seconds = Math.floor(totalSeconds % 60).toString().padStart(2, '0')
+                        return hours === "00" ? `${minutes}:${seconds}` : `${hours}:${minutes}:${seconds}`
+                    } else {
+                        let hours = root.hours.toString().padStart(2, '0')
+                        let minutes = root.minutes.toString().padStart(2, '0')
+                        return hours === "00" ? `${minutes}:00` : `${hours}:${minutes}:00`
+                    }
+                }
+            }
+        }
+        
+        // Circular progress indicator
+        CircularProgress {
+            id: circularProgress
+            anchors {
+                top: timerDisplay.bottom
+                topMargin: 16
+                horizontalCenter: parent.horizontalCenter
+            }
+            lineWidth: 5
+            value: {
+                let total = root.hours * 3600 + root.minutes * 60
+                if (total === 0) return 0
+                if (root.isRunning || root.isFinished) {
+                    return 1 - (root.remainingSeconds / total)
+                } else {
+                    return 0
+                }
+            }
+            implicitSize: 100
             enableAnimation: true
+        }
+        
+        // Settings (hidden initially)
+        Rectangle {
+            id: settingsPanel
+            anchors {
+                top: circularProgress.bottom
+                topMargin: -50
+                left: parent.left
+                right: parent.right
+            }
+            height: settingsColumn.implicitHeight + 10
+            color: Appearance.colors.colLayer2
+            radius: 6
+            visible: root.showSettings && !root.isRunning
             
             ColumnLayout {
-                anchors.centerIn: parent
+                id: settingsColumn
+                anchors {
+                    fill: parent
+                    margins: 5
+                }
                 spacing: 0
                 
-                StyledText {
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 12
                     Layout.alignment: Qt.AlignHCenter
-                    text: {
-                        if (isRunning || isFinished) {
-                            return formatTime(remainingSeconds)
-                        } else {
-                            return formatTime(hours * 3600 + minutes * 60 + seconds)
+                    
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 4
+                        Layout.alignment: Qt.AlignHCenter
+                        
+                        StyledText {
+                            text: "H"
+                            font.pixelSize: 10
+                            font.weight: Font.Medium
+                            color: Appearance.colors.colOnLayer2
+                            Layout.preferredWidth: 12
+                        }
+                        
+                        RippleButton {
+                            Layout.preferredHeight: 24
+                            Layout.preferredWidth: 24
+                            buttonRadius: 3
+                            colBackground: Appearance.colors.colLayer1
+                            colBackgroundHover: Appearance.colors.colLayer1Hover
+                            colRipple: Appearance.colors.colLayer1Active
+                            
+                            contentItem: MaterialSymbol {
+                                anchors.centerIn: parent
+                                text: "remove"
+                                iconSize: 14
+                                color: Appearance.colors.colOnLayer1
+                            }
+                            
+                            onClicked: if (root.hours > 0) root.hours--
+                        }
+                        
+                        StyledText {
+                            text: root.hours.toString().padStart(2, '0')
+                            font.pixelSize: 11
+                            font.weight: Font.Medium
+                            color: Appearance.colors.colPrimary
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.preferredWidth: 20
+                        }
+                        
+                        RippleButton {
+                            Layout.preferredHeight: 24
+                            Layout.preferredWidth: 24
+                            buttonRadius: 3
+                            colBackground: Appearance.colors.colLayer1
+                            colBackgroundHover: Appearance.colors.colLayer1Hover
+                            colRipple: Appearance.colors.colLayer1Active
+                            
+                            contentItem: MaterialSymbol {
+                                anchors.centerIn: parent
+                                text: "add"
+                                iconSize: 14
+                                color: Appearance.colors.colOnLayer1
+                            }
+                            
+                            onClicked: if (root.hours < 23) root.hours++
                         }
                     }
-                    font.pixelSize: 40
-                    color: Appearance.m3colors.m3onSurface
-                }
-                
-                StyledText {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: isFinished ? Translation.tr("Finished!") : 
-                          isRunning ? Translation.tr("Running") : Translation.tr("Timer")
-                    font.pixelSize: Appearance.font.pixelSize.normal
-                    color: Appearance.colors.colSubtext
+                    
+                    Item { Layout.fillWidth: true }
+                    
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 4
+                        Layout.alignment: Qt.AlignHCenter
+                        
+                        StyledText {
+                            text: "M"
+                            font.pixelSize: 10
+                            font.weight: Font.Medium
+                            color: Appearance.colors.colOnLayer2
+                            Layout.preferredWidth: 12
+                        }
+                        
+                        RippleButton {
+                            Layout.preferredHeight: 24
+                            Layout.preferredWidth: 24
+                            buttonRadius: 3
+                            colBackground: Appearance.colors.colLayer1
+                            colBackgroundHover: Appearance.colors.colLayer1Hover
+                            colRipple: Appearance.colors.colLayer1Active
+                            
+                            contentItem: MaterialSymbol {
+                                anchors.centerIn: parent
+                                text: "remove"
+                                iconSize: 14
+                                color: Appearance.colors.colOnLayer1
+                            }
+                            
+                            onClicked: if (root.minutes > 0) root.minutes = Math.max(0, root.minutes - 5)
+                        }
+                        
+                        StyledText {
+                            text: root.minutes.toString().padStart(2, '0')
+                            font.pixelSize: 11
+                            font.weight: Font.Medium
+                            color: Appearance.colors.colPrimary
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.preferredWidth: 20
+                        }
+                        
+                        RippleButton {
+                            Layout.preferredHeight: 24
+                            Layout.preferredWidth: 24
+                            buttonRadius: 3
+                            colBackground: Appearance.colors.colLayer1
+                            colBackgroundHover: Appearance.colors.colLayer1Hover
+                            colRipple: Appearance.colors.colLayer1Active
+                            
+                            contentItem: MaterialSymbol {
+                                anchors.centerIn: parent
+                                text: "add"
+                                iconSize: 14
+                                color: Appearance.colors.colOnLayer1
+                            }
+                            
+                            onClicked: if (root.minutes < 59) root.minutes = Math.min(59, root.minutes + 5)
+                        }
+                    }
                 }
             }
         }
         
-        // Fixed spacer to maintain layout consistency
-        Item {
-            Layout.fillHeight: true
-            Layout.minimumHeight: 20
-        }
-        
-        // Container for presets with fixed height to prevent layout shifts
-        Item {
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredHeight: 80
-            Layout.preferredWidth: 200
-            
-            // Quick presets (when not running)
-            GridLayout {
-                anchors.centerIn: parent
-                columns: 4
-                columnSpacing: 4
-                rowSpacing: 4
-                visible: !isRunning && !isFinished
-            
-            RippleButton {
-                Layout.preferredHeight: 32
-                Layout.preferredWidth: 45
-                colBackground: Appearance.colors.colLayer2
-                colBackgroundHover: Appearance.colors.colLayer2Hover
-                colRipple: Appearance.colors.colLayer2Active
-                buttonRadius: Appearance.rounding.small
-                
-                contentItem: StyledText {
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "5m"
-                    font.pixelSize: Appearance.font.pixelSize.smaller
-                    color: Appearance.colors.colOnLayer2
-                }
-                
-                onClicked: { hours = 0; minutes = 5; seconds = 0 }
-            }
-            
-            RippleButton {
-                Layout.preferredHeight: 32
-                Layout.preferredWidth: 45
-                colBackground: Appearance.colors.colLayer2
-                colBackgroundHover: Appearance.colors.colLayer2Hover
-                colRipple: Appearance.colors.colLayer2Active
-                buttonRadius: Appearance.rounding.small
-                
-                contentItem: StyledText {
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "10m"
-                    font.pixelSize: Appearance.font.pixelSize.smaller
-                    color: Appearance.colors.colOnLayer2
-                }
-                
-                onClicked: { hours = 0; minutes = 10; seconds = 0 }
-            }
-            
-            RippleButton {
-                Layout.preferredHeight: 32
-                Layout.preferredWidth: 45
-                colBackground: Appearance.colors.colLayer2
-                colBackgroundHover: Appearance.colors.colLayer2Hover
-                colRipple: Appearance.colors.colLayer2Active
-                buttonRadius: Appearance.rounding.small
-                
-                contentItem: StyledText {
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "25m"
-                    font.pixelSize: Appearance.font.pixelSize.smaller
-                    color: Appearance.colors.colOnLayer2
-                }
-                
-                onClicked: { hours = 0; minutes = 25; seconds = 0 }
-            }
-            
-            RippleButton {
-                Layout.preferredHeight: 32
-                Layout.preferredWidth: 45
-                colBackground: Appearance.colors.colLayer2
-                colBackgroundHover: Appearance.colors.colLayer2Hover
-                colRipple: Appearance.colors.colLayer2Active
-                buttonRadius: Appearance.rounding.small
-                
-                contentItem: StyledText {
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "1h"
-                    font.pixelSize: Appearance.font.pixelSize.smaller
-                    color: Appearance.colors.colOnLayer2
-                }
-                
-                onClicked: { hours = 1; minutes = 0; seconds = 0 }
-            }
-            
-            // Time adjustment buttons
-            RippleButton {
-                Layout.preferredHeight: 32
-                Layout.preferredWidth: 45
-                colBackground: Appearance.colors.colSecondaryContainer
-                colBackgroundHover: Appearance.colors.colSecondaryContainerHover
-                buttonRadius: Appearance.rounding.small
-                
-                contentItem: StyledText {
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "+1m"
-                    font.pixelSize: Appearance.font.pixelSize.smaller
-                    color: Appearance.colors.colOnSecondaryContainer
-                }
-                
-                onClicked: { 
-                    minutes += 1
-                    if (minutes >= 60) {
-                        hours += Math.floor(minutes / 60)
-                        minutes = minutes % 60
-                    }
-                }
-            }
-            
-            RippleButton {
-                Layout.preferredHeight: 32
-                Layout.preferredWidth: 45
-                colBackground: Appearance.colors.colSecondaryContainer
-                colBackgroundHover: Appearance.colors.colSecondaryContainerHover
-                buttonRadius: Appearance.rounding.small
-                
-                contentItem: StyledText {
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "+5m"
-                    font.pixelSize: Appearance.font.pixelSize.smaller
-                    color: Appearance.colors.colOnSecondaryContainer
-                }
-                
-                onClicked: { 
-                    minutes += 5
-                    if (minutes >= 60) {
-                        hours += Math.floor(minutes / 60)
-                        minutes = minutes % 60
-                    }
-                }
-            }
-            
-            RippleButton {
-                Layout.preferredHeight: 32
-                Layout.preferredWidth: 45
-                colBackground: Appearance.colors.colSecondaryContainer
-                colBackgroundHover: Appearance.colors.colSecondaryContainerHover
-                buttonRadius: Appearance.rounding.small
-                
-                contentItem: StyledText {
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "-1m"
-                    font.pixelSize: Appearance.font.pixelSize.smaller
-                    color: Appearance.colors.colOnSecondaryContainer
-                }
-                
-                onClicked: { 
-                    if (minutes > 0) {
-                        minutes -= 1
-                    } else if (hours > 0) {
-                        hours -= 1
-                        minutes = 59
-                    }
-                }
-            }
-            
-            RippleButton {
-                Layout.preferredHeight: 32
-                Layout.preferredWidth: 45
-                colBackground: Appearance.colors.colErrorContainer
-                colBackgroundHover: Appearance.colors.colErrorContainerHover
-                buttonRadius: Appearance.rounding.small
-                
-                contentItem: StyledText {
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "Clear"
-                    font.pixelSize: Appearance.font.pixelSize.smaller
-                    color: Appearance.colors.colOnErrorContainer
-                }
-                
-                onClicked: { hours = 0; minutes = 0; seconds = 0 }
-            }
-        }
-        }
-        
-        // Control buttons (like pomodoro)
+        // Control buttons
         RowLayout {
-            Layout.alignment: Qt.AlignHCenter
-            spacing: 10
+            id: controlButtons
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                bottom: parent.bottom
+                bottomMargin: 40
+            }
+            spacing: 0
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             
             RippleButton {
-                implicitHeight: 35
-                implicitWidth: 90
-                font.pixelSize: Appearance.font.pixelSize.larger
-                enabled: !isRunning && !isFinished && (hours > 0 || minutes > 0 || seconds > 0)
+                Layout.preferredHeight: 35
+                Layout.preferredWidth: 35
+                buttonRadius: 4
+                enabled: !root.isRunning && !root.isFinished && (root.hours > 0 || root.minutes > 0 || root.isPaused)
+                colBackground: Appearance.colors.colPrimary
+                colBackgroundHover: Appearance.colors.colPrimaryHover
+                colRipple: Appearance.colors.colPrimaryActive
                 
-                colBackground: isRunning ? Appearance.colors.colSecondaryContainer : Appearance.colors.colPrimary
-                colBackgroundHover: isRunning ? Appearance.colors.colSecondaryContainerHover : Appearance.colors.colPrimaryHover
-                colRipple: isRunning ? Appearance.colors.colSecondaryContainerActive : Appearance.colors.colPrimaryActive
-                
-                contentItem: StyledText {
+                contentItem: MaterialSymbol {
                     anchors.centerIn: parent
-                    horizontalAlignment: Text.AlignHCenter
-                    text: isRunning ? Translation.tr("Pause") : remainingSeconds === 0 ? Translation.tr("Start") : Translation.tr("Resume")
-                    color: isRunning ? Appearance.colors.colOnSecondaryContainer : Appearance.colors.colOnPrimary
+                    text: "play_arrow"
+                    iconSize: 18
+                    color: Appearance.colors.colOnPrimary
                 }
                 
-                onClicked: isRunning ? pauseTimer() : startTimer()
+                onClicked: {
+                    if (root.isPaused) {
+                        root.isPaused = false
+                        root.isRunning = true
+                        root.countdownTimer.start()
+                    } else {
+                        root.startTimer()
+                    }
+                }
             }
             
             RippleButton {
-                implicitHeight: 35
-                implicitWidth: 90
-                font.pixelSize: Appearance.font.pixelSize.larger
-                enabled: isRunning || isFinished || remainingSeconds > 0
-                
+                Layout.preferredHeight: 35
+                Layout.preferredWidth: 35
+                buttonRadius: 4
+                enabled: root.isRunning || root.isFinished
                 colBackground: Appearance.colors.colErrorContainer
                 colBackgroundHover: Appearance.colors.colErrorContainerHover
                 colRipple: Appearance.colors.colErrorContainerActive
                 
-                contentItem: StyledText {
+                contentItem: MaterialSymbol {
                     anchors.centerIn: parent
-                    horizontalAlignment: Text.AlignHCenter
-                    text: Translation.tr("Reset")
+                    text: "restart_alt"
+                    iconSize: 18
                     color: Appearance.colors.colOnErrorContainer
                 }
                 
-                onClicked: resetTimer()
+                onClicked: {
+                    root.resetTimer()
+                    root.isPaused = false
+                }
+            }
+            
+            RippleButton {
+                Layout.preferredHeight: 35
+                Layout.preferredWidth: 35
+                buttonRadius: 4
+                enabled: !root.isRunning
+                colBackground: Appearance.colors.colLayer2
+                colBackgroundHover: Appearance.colors.colLayer2Hover
+                colRipple: Appearance.colors.colLayer2Active
+                
+                contentItem: MaterialSymbol {
+                    anchors.centerIn: parent
+                    text: root.showSettings ? "close" : "edit"
+                    iconSize: 18
+                    color: Appearance.colors.colOnLayer2
+                }
+                
+                onClicked: root.showSettings = !root.showSettings
             }
         }
     }

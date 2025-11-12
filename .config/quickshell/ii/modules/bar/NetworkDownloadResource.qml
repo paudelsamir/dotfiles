@@ -16,55 +16,47 @@ Item {
 
     RowLayout {
         id: networkRowLayout
-        spacing: 2
+        spacing: 0
         x: shown ? 0 : -networkRowLayout.width
         anchors {
             verticalCenter: parent.verticalCenter
         }
 
-        ClippedFilledCircularProgress {
-            id: networkCircProg
+        Rectangle {
             Layout.alignment: Qt.AlignVCenter
-            lineWidth: Appearance.rounding.unsharpen
-            value: 0.3  // Static visual indicator since network speed isn't a percentage
-            implicitSize: 20
-            colPrimary: Appearance.colors.colOnSecondaryContainer
-            accountForLightBleeding: true
-            enableAnimation: false
+            width: 18
+            height: 18
+            radius: 5
+            color: Appearance.colors.colSecondaryContainer
 
-            Item {
+            MaterialSymbol {
                 anchors.centerIn: parent
-                width: networkCircProg.implicitSize
-                height: networkCircProg.implicitSize
-                
-                MaterialSymbol {
-                    anchors.centerIn: parent
-                    font.weight: Font.DemiBold
-                    fill: 1
-                    text: "download"
-                    iconSize: Appearance.font.pixelSize.normal
-                    color: Appearance.m3colors.m3onSecondaryContainer
-                }
+                font.weight: Font.Normal
+                fill: 1
+                text: "download"
+                iconSize: Appearance.font.pixelSize.small
+                color: Appearance.m3colors.m3onSecondaryContainer
             }
         }
 
         Item {
             Layout.alignment: Qt.AlignVCenter
-            implicitWidth: networkTextMetrics.width
+            Layout.preferredWidth: networkTextMetrics.width
             implicitHeight: networkText.implicitHeight
 
             TextMetrics {
                 id: networkTextMetrics
-                text: "999M/s"  // Max expected width for network speed
-                font.pixelSize: Appearance.font.pixelSize.small
+                text: "9999M/s"  // Max expected width for network speed
+                font.pixelSize: Appearance.font.pixelSize.extraSmall
                 font.family: "monospace"
             }
 
             StyledText {
                 id: networkText
-                anchors.centerIn: parent
+                anchors.fill: parent
+                horizontalAlignment: Text.AlignRight
                 color: Appearance.colors.colOnLayer1
-                font.pixelSize: Appearance.font.pixelSize.small
+                font.pixelSize: Appearance.font.pixelSize.extraSmall
                 font.family: "monospace"
                 text: ResourceUsage.formatNetworkSpeed(ResourceUsage.networkDownSpeed)
             }

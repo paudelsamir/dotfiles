@@ -22,7 +22,7 @@ Item {
     readonly property int workspaceGroup: Math.floor((monitor?.activeWorkspace?.id - 1) / root.workspacesShown)
     property list<bool> workspaceOccupied: []
     property int widgetPadding: 4
-    property int workspaceButtonWidth: 26
+    property int workspaceButtonWidth: 22
     property real activeWorkspaceMargin: 2
     property real workspaceIconSize: workspaceButtonWidth * 0.69
     property real workspaceIconSizeShrinked: workspaceButtonWidth * 0.55
@@ -120,11 +120,11 @@ Item {
                 z: 1
                 implicitWidth: workspaceButtonWidth
                 implicitHeight: workspaceButtonWidth
-                radius: (width / 2)
+                radius: 4
                 property var previousOccupied: (workspaceOccupied[index-1] && !(!activeWindow?.activated && monitor?.activeWorkspace?.id === index))
                 property var rightOccupied: (workspaceOccupied[index+1] && !(!activeWindow?.activated && monitor?.activeWorkspace?.id === index+2))
-                property var radiusPrev: previousOccupied ? 0 : (width / 2)
-                property var radiusNext: rightOccupied ? 0 : (width / 2)
+                property var radiusPrev: previousOccupied ? 0 : 4
+                property var radiusNext: rightOccupied ? 0 : 4
 
                 topLeftRadius: radiusPrev
                 bottomLeftRadius: root.vertical ? radiusNext : radiusPrev
@@ -155,7 +155,7 @@ Item {
     Rectangle {
         z: 2
         // Make active ws indicator, which has a brighter color, smaller to look like it is of the same size as ws occupied highlight
-        radius: Appearance.rounding.full
+        radius: 4
         color: Appearance.colors.colPrimary
 
         anchors {

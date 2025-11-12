@@ -71,7 +71,7 @@ Item {
 
         RippleButton {
             id: trayOverflowButton
-            visible: root.showOverflowMenu && root.unpinnedItems.length > 0
+            visible: false
             toggled: root.trayOverflowOpen
             property bool containsMouse: hovered
 
@@ -88,7 +88,7 @@ Item {
 
             contentItem: MaterialSymbol {
                 anchors.centerIn: parent
-                iconSize: Appearance.font.pixelSize.larger
+                iconSize: Appearance.font.pixelSize.smaller
                 text: "expand_more"
                 horizontalAlignment: Text.AlignHCenter
                 color: root.trayOverflowOpen ? Appearance.colors.colOnSecondaryContainer : Appearance.colors.colOnLayer2
@@ -130,6 +130,23 @@ Item {
         Repeater {
             model: ScriptModel {
                 values: root.pinnedItems
+            }
+
+            delegate: SysTrayItem {
+                required property SystemTrayItem modelData
+                item: modelData
+                Layout.fillHeight: !root.vertical
+                Layout.fillWidth: root.vertical
+                onMenuClosed: root.releaseFocus();
+                onMenuOpened: (qsWindow) => {
+                    root.setExtraWindowAndGrabFocus(qsWindow);
+                }
+            }
+        }
+
+        Repeater {
+            model: ScriptModel {
+                values: root.unpinnedItems
             }
 
             delegate: SysTrayItem {

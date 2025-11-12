@@ -20,35 +20,26 @@ Item {
 
     RowLayout {
         id: resourceRowLayout
-        spacing: 2
+        spacing: 0
         x: shown ? 0 : -resourceRowLayout.width
         anchors {
             verticalCenter: parent.verticalCenter
         }
 
-        ClippedFilledCircularProgress {
-            id: resourceCircProg
+        Rectangle {
             Layout.alignment: Qt.AlignVCenter
-            lineWidth: Appearance.rounding.unsharpen
-            value: percentage
-            implicitSize: 20
-            colPrimary: root.warning ? Appearance.colors.colError : Appearance.colors.colOnSecondaryContainer
-            accountForLightBleeding: !root.warning
-            enableAnimation: false
+            width: 18
+            height: 18
+            radius: 5
+            color: root.warning ? Appearance.colors.colError : Appearance.colors.colSecondaryContainer
 
-            Item {
+            MaterialSymbol {
                 anchors.centerIn: parent
-                width: resourceCircProg.implicitSize
-                height: resourceCircProg.implicitSize
-                
-                MaterialSymbol {
-                    anchors.centerIn: parent
-                    font.weight: Font.DemiBold
-                    fill: 1
-                    text: iconName
-                    iconSize: Appearance.font.pixelSize.normal
-                    color: Appearance.m3colors.m3onSecondaryContainer
-                }
+                font.weight: Font.Normal
+                fill: 1
+                text: iconName
+                iconSize: Appearance.font.pixelSize.small
+                color: root.warning ? Appearance.colors.colOnError : Appearance.m3colors.m3onSecondaryContainer
             }
         }
 
@@ -59,16 +50,18 @@ Item {
 
             TextMetrics {
                 id: fullPercentageTextMetrics
-                text: "100"
-                font.pixelSize: Appearance.font.pixelSize.small
+                text: "100%"
+                font.pixelSize: Appearance.font.pixelSize.extraSmall
+                font.family: "monospace"
             }
 
             StyledText {
                 id: percentageText
                 anchors.centerIn: parent
                 color: Appearance.colors.colOnLayer1
-                font.pixelSize: Appearance.font.pixelSize.small
-                text: `${Math.round(percentage * 100).toString()}`
+                font.pixelSize: Appearance.font.pixelSize.extraSmall
+                font.family: "monospace"
+                text: `${Math.round(percentage * 100)}%`
             }
         }
 

@@ -25,8 +25,8 @@ Item {
             id: elapsedIndicator
             
             anchors {
-                top: undefined
-                verticalCenter: parent.verticalCenter
+                top: parent.top
+                topMargin: 40
                 left: controlButtons.left
                 leftMargin: 6
             }
@@ -37,7 +37,6 @@ Item {
                 AnchorChanges {
                     target: elapsedIndicator
                     anchors.top: parent.top
-                    anchors.verticalCenter: undefined
                     anchors.left: controlButtons.left
                 }
             }
@@ -156,7 +155,7 @@ Item {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 bottom: parent.bottom
-                bottomMargin: 6
+                bottomMargin: 60
             }
             spacing: 4
 
