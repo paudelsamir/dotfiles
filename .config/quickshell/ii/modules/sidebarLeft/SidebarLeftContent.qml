@@ -54,184 +54,228 @@ Item {
         anchors.margins: sidebarPadding
         spacing: sidebarPadding
 
-        // Header Row - Quick Scratchpad App Launchers
-        RowLayout {
+        // Quick Toggles Bar - 365 and DSA
+        Rectangle {
+            Layout.fillWidth: true
             Layout.fillHeight: false
-            spacing: 10
-            Layout.margins: 10
-            Layout.topMargin: 5
-            Layout.bottomMargin: 0
+            Layout.preferredHeight: 50
+            color: Appearance.colors.colLayer1
+            radius: Appearance.rounding.normal
+            
+            RowLayout {
+                anchors.fill: parent
+                anchors.margins: 10
+                spacing: 10
 
-            MaterialSymbol {
-                iconSize: 16
-                fill: 0
-                color: Appearance.colors.colOnLayer0
-                text: "apps"
-            }
-
-            StyledText {
-                font.pixelSize: Appearance.font.pixelSize.small
-                color: Appearance.colors.colOnLayer0
-                text: "Quick Apps"
-            }
-
-            Item {
-                Layout.fillWidth: true
-            }
-
-            ButtonGroup {
-                GroupButton {
-                    baseWidth: 35
-                    baseHeight: 35
-                    buttonRadius: 17
-                    toggled: false
-
-                    contentItem: MaterialSymbol {
-                        anchors.centerIn: parent
-                        iconSize: 18
-                        fill: 0
-                        color: Appearance.colors.colOnLayer1
-                        text: "trending_up"
-                    }
-
-                    onClicked: {
-                        Hyprland.dispatch("togglespecialworkspace", "firefox");
-                        Quickshell.execDetached(["bash", "-c", "sleep 0.2 && hyprctl dispatch movetoworkspacesilent special:firefox,^(firefox)$"]);
-                        Quickshell.execDetached(["firefox", "https://meroshare.cdsc.com.np/#/login", "https://keep.google.com"]);
-                    }
-
-                    StyledToolTip {
-                        text: "Meroshare"
-                    }
+                MaterialSymbol {
+                    iconSize: 20
+                    fill: 0
+                    color: Appearance.colors.colPrimary
+                    text: "workspace_premium"
                 }
 
-                GroupButton {
-                    baseWidth: 35
-                    baseHeight: 35
-                    buttonRadius: 17
-                    toggled: false
-
-                    contentItem: MaterialSymbol {
-                        anchors.centerIn: parent
-                        iconSize: 18
-                        fill: 0
-                        color: Appearance.colors.colOnLayer1
-                        text: "mail"
-                    }
-
-                    onClicked: {
-                        Hyprland.dispatch("togglespecialworkspace", "firefox");
-                        Quickshell.execDetached(["bash", "-c", "sleep 0.2 && hyprctl dispatch movetoworkspacesilent special:firefox,^(firefox)$"]);
-                        Quickshell.execDetached(["firefox", "https://gmail.com"]);
-                    }
-
-                    StyledToolTip {
-                        text: "Gmail"
-                    }
+                StyledText {
+                    font.pixelSize: Appearance.font.pixelSize.normal
+                    font.weight: Font.Medium
+                    color: Appearance.colors.colOnLayer1
+                    text: "Workspaces"
                 }
 
-                GroupButton {
-                    baseWidth: 35
-                    baseHeight: 35
-                    buttonRadius: 17
-                    toggled: false
-
-                    contentItem: MaterialSymbol {
-                        anchors.centerIn: parent
-                        iconSize: 18
-                        fill: 0
-                        color: Appearance.colors.colOnLayer1
-                        text: "chess"
-                    }
-
-                    onClicked: {
-                        Quickshell.execDetached(["bash", "-c", "brave --new-window https://chess.com & sleep 0.3 && hyprctl dispatch fullscreen 1"]);
-                    }
-
-                    StyledToolTip {
-                        text: "Chess.com"
-                    }
+                Item {
+                    Layout.fillWidth: true
                 }
 
-                GroupButton {
-                    baseWidth: 35
-                    baseHeight: 35
-                    buttonRadius: 17
-                    toggled: false
+                ButtonGroup {
+                    spacing: 8
+                    
+                    GroupButton {
+                        baseWidth: 36
+                        baseHeight: 36
+                        buttonRadius: 18
+                        toggled: false
+                        color: Appearance.colors.colLayer0
 
-                    contentItem: MaterialSymbol {
-                        anchors.centerIn: parent
-                        iconSize: 18
-                        fill: 0
-                        color: Appearance.colors.colOnLayer1
-                        text: "music_note"
+                        contentItem: MaterialSymbol {
+                            anchors.centerIn: parent
+                            iconSize: 18
+                            fill: 0
+                            color: Appearance.colors.colOnLayer1
+                            text: "school"
+                        }
+
+                        onClicked: {
+                            Quickshell.execDetached(["code", "/home/sam/Github/365DaysOfData"]);
+                            Quickshell.execDetached(["bash", "-c", "brave --new-window https://github.com/paudelsamir/365DaysOfData & sleep 0.3 && hyprctl dispatch fullscreen 1"]);
+                        }
+
+                        StyledToolTip {
+                            text: "365: AI Learning & Worklog"
+                        }
                     }
 
-                    onClicked: {
-                        Hyprland.dispatch("togglespecialworkspace", "spotify");
-                        Quickshell.execDetached(["bash", "-c", "sleep 0.2 && hyprctl dispatch movetoworkspacesilent special:spotify,^(spotify|Spotify)$"]);
-                        Quickshell.execDetached(["spotify"]);
-                    }
+                    GroupButton {
+                        baseWidth: 36
+                        baseHeight: 36
+                        buttonRadius: 18
+                        toggled: false
+                        color: Appearance.colors.colLayer0
 
-                    StyledToolTip {
-                        text: "Spotify"
+                        contentItem: MaterialSymbol {
+                            anchors.centerIn: parent
+                            iconSize: 18
+                            fill: 0
+                            color: Appearance.colors.colOnLayer1
+                            text: "code"
+                        }
+
+                        onClicked: {
+                            Quickshell.execDetached(["code", "/home/sam/Github/Coding-Interview-Preparation"]);
+                            Quickshell.execDetached(["brave", "--new-window", "https://neetcode.io/practice", "https://leetcode.com/problemset/all/"]);
+                        }
+
+                        StyledToolTip {
+                            text: "DSA: Interview Prep Workspace"
+                        }
                     }
                 }
             }
         }
 
-        // Quick Toggles Bar - 365 and DSA
-        ButtonGroup {
-            Layout.alignment: Qt.AlignHCenter
-            spacing: 5
-            padding: 5
+        // Header Row - Quick Scratchpad App Launchers with improved design
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.fillHeight: false
+            Layout.preferredHeight: 50
             color: Appearance.colors.colLayer1
+            radius: Appearance.rounding.normal
+            
+            RowLayout {
+                anchors.fill: parent
+                anchors.margins: 10
+                spacing: 10
 
-            GroupButton {
-                baseWidth: 40
-                baseHeight: 40
-                buttonRadius: 20
-                toggled: false
-
-                contentItem: MaterialSymbol {
-                    anchors.centerIn: parent
+                MaterialSymbol {
                     iconSize: 20
                     fill: 0
+                    color: Appearance.colors.colPrimary
+                    text: "apps"
+                }
+
+                StyledText {
+                    font.pixelSize: Appearance.font.pixelSize.normal
+                    font.weight: Font.Medium
                     color: Appearance.colors.colOnLayer1
-                    text: "school"
+                    text: "Quick Apps"
                 }
 
-                onClicked: {
-                    Quickshell.execDetached(["code", "/home/sam/Github/365DaysOfData"]);
-                    Quickshell.execDetached(["bash", "-c", "brave --new-window https://github.com/paudelsamir/365DaysOfData & sleep 0.3 && hyprctl dispatch fullscreen 1"]);
+                Item {
+                    Layout.fillWidth: true
                 }
 
-                StyledToolTip {
-                    text: "365: AI Learning & Worklog"
-                }
-            }
+                ButtonGroup {
+                    spacing: 8
+                    
+                    GroupButton {
+                        baseWidth: 36
+                        baseHeight: 36
+                        buttonRadius: 18
+                        toggled: false
+                        color: Appearance.colors.colLayer0
 
-            GroupButton {
-                baseWidth: 40
-                baseHeight: 40
-                buttonRadius: 20
-                toggled: false
+                        contentItem: MaterialSymbol {
+                            anchors.centerIn: parent
+                            iconSize: 18
+                            fill: 0
+                            color: Appearance.colors.colOnLayer1
+                            text: "trending_up"
+                        }
 
-                contentItem: MaterialSymbol {
-                    anchors.centerIn: parent
-                    iconSize: 20
-                    fill: 0
-                    color: Appearance.colors.colOnLayer1
-                    text: "code"
-                }
+                        onClicked: {
+                            Hyprland.dispatch("togglespecialworkspace", "firefox");
+                            Quickshell.execDetached(["bash", "-c", "sleep 0.2 && hyprctl dispatch movetoworkspacesilent special:firefox,^(firefox)$"]);
+                            Quickshell.execDetached(["firefox", "https://meroshare.cdsc.com.np/#/login", "https://keep.google.com"]);
+                        }
 
-                onClicked: {
-                    Quickshell.execDetached(["code", "/home/sam/Github/Coding-Interview-Preparation"]);
-                    Quickshell.execDetached(["brave", "--new-window", "https://neetcode.io/practice", "https://leetcode.com/problemset/all/"]);
-                }
+                        StyledToolTip {
+                            text: "Meroshare"
+                        }
+                    }
 
-                StyledToolTip {
-                    text: "DSA: Interview Prep Workspace"
+                    GroupButton {
+                        baseWidth: 36
+                        baseHeight: 36
+                        buttonRadius: 18
+                        toggled: false
+                        color: Appearance.colors.colLayer0
+
+                        contentItem: MaterialSymbol {
+                            anchors.centerIn: parent
+                            iconSize: 18
+                            fill: 0
+                            color: Appearance.colors.colOnLayer1
+                            text: "mail"
+                        }
+
+                        onClicked: {
+                            Hyprland.dispatch("togglespecialworkspace", "firefox");
+                            Quickshell.execDetached(["bash", "-c", "sleep 0.2 && hyprctl dispatch movetoworkspacesilent special:firefox,^(firefox)$"]);
+                            Quickshell.execDetached(["firefox", "https://gmail.com"]);
+                        }
+
+                        StyledToolTip {
+                            text: "Gmail"
+                        }
+                    }
+
+                    GroupButton {
+                        baseWidth: 36
+                        baseHeight: 36
+                        buttonRadius: 18
+                        toggled: false
+                        color: Appearance.colors.colLayer0
+
+                        contentItem: MaterialSymbol {
+                            anchors.centerIn: parent
+                            iconSize: 18
+                            fill: 0
+                            color: Appearance.colors.colOnLayer1
+                            text: "chess"
+                        }
+
+                        onClicked: {
+                            Quickshell.execDetached(["bash", "-c", "brave --new-window https://chess.com & sleep 0.3 && hyprctl dispatch fullscreen 1"]);
+                        }
+
+                        StyledToolTip {
+                            text: "Chess.com"
+                        }
+                    }
+
+                    GroupButton {
+                        baseWidth: 36
+                        baseHeight: 36
+                        buttonRadius: 18
+                        toggled: false
+                        color: Appearance.colors.colLayer0
+
+                        contentItem: MaterialSymbol {
+                            anchors.centerIn: parent
+                            iconSize: 18
+                            fill: 0
+                            color: Appearance.colors.colOnLayer1
+                            text: "music_note"
+                        }
+
+                        onClicked: {
+                            Hyprland.dispatch("togglespecialworkspace", "spotify");
+                            Quickshell.execDetached(["bash", "-c", "sleep 0.2 && hyprctl dispatch movetoworkspacesilent special:spotify,^(spotify|Spotify)$"]);
+                            Quickshell.execDetached(["spotify"]);
+                        }
+
+                        StyledToolTip {
+                            text: "Spotify"
+                        }
+                    }
                 }
             }
         }
