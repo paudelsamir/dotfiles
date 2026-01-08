@@ -24,9 +24,9 @@ Item {
 
         Rectangle {
             Layout.alignment: Qt.AlignVCenter
-            width: 18
-            height: 18
-            radius: 5
+            width: 16
+            height: 16
+            radius: 4
             color: Appearance.colors.colSecondaryContainer
 
             MaterialSymbol {
@@ -34,21 +34,21 @@ Item {
                 font.weight: Font.Normal
                 fill: 1
                 text: "download"
-                iconSize: Appearance.font.pixelSize.small
+                iconSize: Appearance.font.pixelSize.smaller
                 color: Appearance.m3colors.m3onSecondaryContainer
             }
         }
 
         Item {
             Layout.alignment: Qt.AlignVCenter
+            Layout.leftMargin: 8
             Layout.preferredWidth: networkTextMetrics.width
             implicitHeight: networkText.implicitHeight
 
             TextMetrics {
                 id: networkTextMetrics
-                text: "9999M/s"  // Max expected width for network speed
-                font.pixelSize: Appearance.font.pixelSize.extraSmall
-                font.family: "monospace"
+                text: "99K/s"
+                font.pixelSize: Appearance.font.pixelSize.small
             }
 
             StyledText {
@@ -56,9 +56,16 @@ Item {
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignRight
                 color: Appearance.colors.colOnLayer1
-                font.pixelSize: Appearance.font.pixelSize.extraSmall
-                font.family: "monospace"
-                text: ResourceUsage.formatNetworkSpeed(ResourceUsage.networkDownSpeed)
+                font.pixelSize: Appearance.font.pixelSize.small
+                text: {
+                    let speed = ResourceUsage.networkDownSpeed;
+                    let kbps = speed / 1024;
+                    if (kbps < 100) {
+                        return kbps < 10 ? (Math.round(kbps * 10) / 10) + "K/s" : Math.round(kbps) + "K/s";
+                    }
+                    let mbps = kbps / 1024;
+                    return (Math.round(mbps * 10) / 10) + "M/s";
+                }
             }
         }
 

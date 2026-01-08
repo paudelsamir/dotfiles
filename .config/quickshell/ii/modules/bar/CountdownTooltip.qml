@@ -29,7 +29,7 @@ StyledPopup {
         
         // Upcoming events
         Repeater {
-            model: root.events.slice(0, 5) // Show max 5 events
+            model: root.events.slice(0, 8) // Show up to 8 events
             
             delegate: Rectangle {
                 width: 200

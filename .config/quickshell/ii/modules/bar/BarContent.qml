@@ -80,15 +80,22 @@ Item { // Bar content region
         LeftSidebarButton { // Left sidebar button
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: Appearance.rounding.screenRounding
+            anchors.leftMargin: Appearance.rounding.screenRounding / 2
             colBackground: barLeftSideMouseArea.hovered ? Appearance.colors.colLayer1Hover : ColorUtils.transparentize(Appearance.colors.colLayer1Hover, 1)
+        }
+
+        VerticalBarSeparator {
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: Appearance.rounding.screenRounding / 2 + 30
+            height: Appearance.sizes.baseBarHeight / 1.5
         }
 
         Row {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: Appearance.rounding.screenRounding + 45
-            spacing: 8
+            anchors.leftMargin: Appearance.rounding.screenRounding / 2 + 42
+            spacing: 4
 
                 MouseArea {
                     width: resourcesComponent.width
@@ -112,15 +119,16 @@ Item { // Bar content region
                 }
                 
                 MouseArea {
-                    width: 60
+                    width: 45
                     height: mediaComponent.height
                     hoverEnabled: true
                     
                     Media {
                         id: mediaComponent
                         visible: root.useShortenedForm < 5
-                        anchors.centerIn: parent
-                        implicitWidth: 60
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        implicitWidth: 45
                     }
                     
                     // Media hover functionality
@@ -156,9 +164,6 @@ Item { // Bar content region
                 Layout.alignment: Qt.AlignVCenter
                 Layout.fillWidth: true
             }
-
-
-
         }
 
         VerticalBarSeparator {
@@ -215,6 +220,14 @@ Item { // Bar content region
                     active: Config.options.bar.weather.enable
 
                     sourceComponent: WeatherBar {}
+                }
+
+                // Timer
+                StyledText {
+                    visible: PopupTimerState.isRunning
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.leftMargin: 8
+                    text: PopupTimerState.formatTime(PopupTimerState.remainingSeconds)
                 }
             }
         }
@@ -325,6 +338,19 @@ Item { // Bar content region
                             color: rightSidebarButton.colText
                         }
                     }
+                    Revealer {
+                        reveal: Idle.inhibit
+                        Layout.fillHeight: true
+                        Layout.rightMargin: reveal ? indicatorsRowLayout.realSpacing : 0
+                        Behavior on Layout.rightMargin {
+                            animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                        }
+                        MaterialSymbol {
+                            text: "coffee"
+                            iconSize: Appearance.font.pixelSize.normal
+                            color: rightSidebarButton.colText
+                        }
+                    }
                     HyprlandXkbIndicator {
                         Layout.alignment: Qt.AlignVCenter
                         Layout.rightMargin: indicatorsRowLayout.realSpacing
@@ -345,23 +371,33 @@ Item { // Bar content region
             }
 
 
+            BatteryIndicator {
+                visible: (root.useShortenedForm < 2 && UPower.displayDevice.isLaptopBattery)
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 0
+            }
+
+            Rectangle {
+                visible: root.useShortenedForm === 0
+                width: 1
+                height: Appearance.sizes.baseBarHeight / 1.5
+                color: Appearance.colors.colOutlineVariant
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 15
+            }
+
+            UtilButtons {
+                visible: (Config.options.bar.verbose && root.useShortenedForm === 0)
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 0
+            }
+
             SysTray {
                 visible: root.useShortenedForm === 0
                 Layout.fillWidth: false
                 Layout.fillHeight: true
                 invertSide: Config?.options.bar.bottom
-            }
-            UtilButtons {
-                visible: (Config.options.bar.verbose && root.useShortenedForm === 0)
-                Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 3
-            }
-
-
-            BatteryIndicator {
-                visible: (root.useShortenedForm < 2 && UPower.displayDevice.isLaptopBattery)
-                Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 2
+                showSeparator: false
             }
 
             Item {

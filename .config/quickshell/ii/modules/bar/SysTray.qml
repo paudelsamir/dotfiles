@@ -65,6 +65,7 @@ Item {
     GridLayout {
         id: gridLayout
         columns: root.vertical ? 1 : -1
+        layoutDirection: Qt.RightToLeft
         anchors.fill: parent
         rowSpacing: 8
         columnSpacing: 15
@@ -165,7 +166,15 @@ Item {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             font.pixelSize: Appearance.font.pixelSize.larger
             color: Appearance.colors.colSubtext
-            text: "•"
+            text: ""
+            visible: false
+        }
+
+        Rectangle {
+            width: 1
+            height: Appearance.sizes.baseBarHeight / 1.5
+            color: Appearance.colors.colOutlineVariant
+            Layout.alignment: Qt.AlignVCenter
             visible: root.showSeparator && SystemTray.items.values.length > 0
         }
     }

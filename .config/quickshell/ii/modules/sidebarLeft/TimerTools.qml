@@ -10,7 +10,7 @@ import "./pomodoro/"
 Item {
     id: root
     
-    property int currentTimerTab: 0
+    property int currentTimerTab: 1
     property var timerTabList: [
         {"icon": "schedule", "name": "Timer"},
         {"icon": "timer", "name": "Stopwatch"},

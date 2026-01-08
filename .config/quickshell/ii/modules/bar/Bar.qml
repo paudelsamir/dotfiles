@@ -210,6 +210,8 @@ Scope {
         }
     }
 
+    CountdownPopup {}
+
     IpcHandler {
         target: "bar"
 

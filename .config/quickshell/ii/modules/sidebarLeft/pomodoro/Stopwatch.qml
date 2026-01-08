@@ -13,6 +13,20 @@ Item {
     Layout.fillWidth: true
     Layout.fillHeight: true
 
+    // Sync with PopupStopwatchState when stopwatch is running
+    Connections {
+        target: TimerService
+        function onStopwatchTimeChanged() {
+            PopupStopwatchState.elapsedTime = TimerService.stopwatchTime
+        }
+    }
+    
+    onVisibleChanged: {
+        if (visible && TimerService.stopwatchRunning) {
+            PopupStopwatchState.isRunning = true
+        }
+    }
+
     Item {
         anchors {
             fill: parent
@@ -166,6 +180,7 @@ Item {
 
                 onClicked: {
                     TimerService.toggleStopwatch()
+                    PopupStopwatchState.isRunning = TimerService.stopwatchRunning
                 }
 
                 colBackground: TimerService.stopwatchRunning ? Appearance.colors.colSecondaryContainer : Appearance.colors.colPrimary 
@@ -187,8 +202,10 @@ Item {
                 onClicked: {
                     if (TimerService.stopwatchRunning) 
                         TimerService.stopwatchRecordLap()
-                    else 
+                    else {
                         TimerService.stopwatchReset()
+                        PopupStopwatchState.isRunning = false
+                    }
                 }
                 enabled: TimerService.stopwatchTime > 0 || Persistent.states.timer.stopwatch.laps.length > 0
 

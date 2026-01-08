@@ -187,16 +187,16 @@ Singleton {
     }
 
     rounding: QtObject {
-        property int unsharpen: 2
-        property int unsharpenmore: 6
-        property int verysmall: 8
-        property int small: 12
-        property int normal: 17
-        property int large: 23
-        property int verylarge: 30
+        property int unsharpen: 1
+        property int unsharpenmore: 3
+        property int verysmall: 4
+        property int small: 6
+        property int normal: 8
+        property int large: 12
+        property int verylarge: 16
         property int full: 9999
         property int screenRounding: large
-        property int windowRounding: 18
+        property int windowRounding: 10
     }
 
     font: QtObject {
@@ -341,7 +341,7 @@ Singleton {
     }
 
     sizes: QtObject {
-        property real baseBarHeight: 34
+        property real baseBarHeight: 32
         property real barHeight: Config.options.bar.cornerStyle === 1 ? 
             (baseBarHeight + root.sizes.hyprlandGapsOut * 2) : baseBarHeight
         property real barCenterSideModuleWidth: Config.options?.bar.verbose ? 360 : 140

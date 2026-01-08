@@ -245,7 +245,7 @@ Item {
                             animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
                         }
                     }
-                    Rectangle { // Dot instead of ws number
+                    Rectangle { // Line instead of dot
                         id: wsDot
                         opacity: (Config.options?.bar.workspaces.alwaysShowNumbers
                             || root.showNumbers
@@ -253,9 +253,9 @@ Item {
                             ) ? 0 : 1
                         visible: opacity > 0
                         anchors.centerIn: parent
-                        width: workspaceButtonWidth * 0.18
-                        height: width
-                        radius: width / 2
+                        width: 2
+                        height: workspaceButtonHeight * 0.35
+                        radius: 1
                         color: (monitor?.activeWorkspace?.id == button.workspaceValue) ? 
                             Appearance.m3colors.m3onPrimary : 
                             (workspaceOccupied[index] ? Appearance.m3colors.m3onSecondaryContainer : 

@@ -28,7 +28,7 @@ Item {
         color: Appearance.m3colors.m3surfaceContainer // Needs to be opaque
         implicitHeight: Math.max(toolbarLayout.implicitHeight + root.padding * 2, 56)
         implicitWidth: toolbarLayout.implicitWidth + root.padding * 2
-        radius: height / 2
+        radius: 12
 
         RowLayout {
             id: toolbarLayout

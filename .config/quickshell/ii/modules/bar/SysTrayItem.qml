@@ -30,12 +30,7 @@ MouseArea {
         }
         event.accepted = true;
     }
-    onEntered: {
-        tooltip.text = item.tooltipTitle.length > 0 ? item.tooltipTitle
-                : (item.title.length > 0 ? item.title : item.id);
-        if (item.tooltipDescription.length > 0) tooltip.text += " • " + item.tooltipDescription;
-        if (Config.options.bar.tray.showItemId) tooltip.text += "\n[" + item.id + "]";
-    }
+    // No hover tooltip
 
     Loader {
         id: menu
@@ -91,11 +86,6 @@ MouseArea {
         }
     }
 
-    PopupToolTip {
-        id: tooltip
-        extraVisibleCondition: root.containsMouse
-        alternativeVisibleCondition: extraVisibleCondition
-        anchorEdges: (!Config.options.bar.bottom && !Config.options.bar.vertical) ? Edges.Bottom : Edges.Top
-    }
+    // Removed PopupToolTip for hover
 
 }

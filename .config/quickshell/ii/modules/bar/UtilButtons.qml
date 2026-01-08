@@ -7,6 +7,7 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Services.Pipewire
 import Quickshell.Services.UPower
+import qs.services
 
 Item {
     id: root
@@ -45,7 +46,7 @@ Item {
                 MaterialSymbol {
                     horizontalAlignment: Qt.AlignHCenter
                     fill: 1
-                    text: "colorize"
+                    text: "color_lens"
                     iconSize: Appearance.font.pixelSize.normal
                     color: Appearance.colors.colOnLayer2
                 }
@@ -99,7 +100,7 @@ Item {
                 MaterialSymbol {
                     horizontalAlignment: Qt.AlignHCenter
                     fill: 0
-                    text: Appearance.m3colors.darkmode ? "light_mode" : "dark_mode"
+                    text: "contrast"
                     iconSize: Appearance.font.pixelSize.normal
                     color: Appearance.colors.colOnLayer2
                 }
@@ -136,6 +137,34 @@ Item {
                     iconSize: Appearance.font.pixelSize.normal
                     color: Appearance.colors.colOnLayer2
                 }
+            }
+        }
+
+        Loader {
+            active: Config.options.bar.utilButtons.showNightLightToggle ?? true
+            visible: Config.options.bar.utilButtons.showNightLightToggle ?? true
+            sourceComponent: CircleUtilButton {
+                Layout.alignment: Qt.AlignVCenter
+                onClicked: Hyprsunset.toggle()
+                MaterialSymbol {
+                    horizontalAlignment: Qt.AlignHCenter
+                    fill: Hyprsunset.active ? 1 : 0
+                    text: Hyprsunset.active ? "nights_stay" : "light_mode"
+                    iconSize: Appearance.font.pixelSize.normal
+                    color: Appearance.colors.colOnLayer2
+                }
+            }
+        }
+
+        CircleUtilButton {
+            Layout.alignment: Qt.AlignVCenter
+            onClicked: Quickshell.execDetached(["dolphin"])
+            MaterialSymbol {
+                horizontalAlignment: Qt.AlignHCenter
+                fill: 0
+                text: "folder"
+                iconSize: Appearance.font.pixelSize.normal
+                color: Appearance.colors.colOnLayer2
             }
         }
     }

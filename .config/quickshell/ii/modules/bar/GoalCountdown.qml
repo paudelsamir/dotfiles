@@ -30,14 +30,14 @@ Item {
         }
     }
     
-    // Get upcoming events sorted by date
+    // Get upcoming events sorted by date (excluding completed ones)
     function getUpcomingEvents() {
         var today = new Date();
         today.setHours(0, 0, 0, 0);
         
         var upcoming = events.filter(function(event) {
             var eventDate = new Date(event.date);
-            return eventDate >= today;
+            return eventDate >= today && !event.done; // Only include active events
         }).sort(function(a, b) {
             return new Date(a.date) - new Date(b.date);
         });

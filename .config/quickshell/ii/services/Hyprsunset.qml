@@ -20,6 +20,12 @@ Singleton {
     property bool firstEvaluation: true
     property bool active: false
 
+    onColorTemperatureChanged: {
+        if (Config.options.light?.night) {
+            Config.options.light.night.colorTemperature = root.colorTemperature;
+        }
+    }
+
     property int fromHour: Number(from.split(":")[0])
     property int fromMinute: Number(from.split(":")[1])
     property int toHour: Number(to.split(":")[0])
@@ -88,6 +94,18 @@ Singleton {
         root.active = false;
         // console.log("[Hyprsunset] Disabling");
         Quickshell.execDetached(["bash", "-c", `pkill hyprsunset`]);
+    }
+
+    function setColorTemperature(temp) {
+        const newTemp = Math.max(2700, Math.min(6500, Math.round(temp)));
+        root.colorTemperature = newTemp;
+        if (Config.options.light?.night) {
+            Config.options.light.night.colorTemperature = newTemp;
+        }
+        // If active, restart hyprsunset with new temperature
+        if (root.active) {
+            Quickshell.execDetached(["bash", "-c", `pkill hyprsunset; sleep 0.1; hyprsunset --temperature ${newTemp}`]);
+        }
     }
 
     function fetchState() {

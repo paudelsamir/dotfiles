@@ -28,9 +28,9 @@ Item {
 
         Rectangle {
             Layout.alignment: Qt.AlignVCenter
-            width: 18
-            height: 18
-            radius: 5
+            width: 16
+            height: 16
+            radius: 4
             color: root.warning ? Appearance.colors.colError : Appearance.colors.colSecondaryContainer
 
             MaterialSymbol {
@@ -38,7 +38,7 @@ Item {
                 font.weight: Font.Normal
                 fill: 1
                 text: iconName
-                iconSize: Appearance.font.pixelSize.small
+                iconSize: Appearance.font.pixelSize.smaller
                 color: root.warning ? Appearance.colors.colOnError : Appearance.m3colors.m3onSecondaryContainer
             }
         }
@@ -51,16 +51,14 @@ Item {
             TextMetrics {
                 id: fullPercentageTextMetrics
                 text: "100%"
-                font.pixelSize: Appearance.font.pixelSize.extraSmall
-                font.family: "monospace"
+                font.pixelSize: Appearance.font.pixelSize.small
             }
 
             StyledText {
                 id: percentageText
                 anchors.centerIn: parent
                 color: Appearance.colors.colOnLayer1
-                font.pixelSize: Appearance.font.pixelSize.extraSmall
-                font.family: "monospace"
+                font.pixelSize: Appearance.font.pixelSize.small
                 text: `${Math.round(percentage * 100)}%`
             }
         }

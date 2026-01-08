@@ -45,35 +45,16 @@ Item {
         transparentBorder: true
     }
 
-    MaterialCookie {
+    Rectangle {
         id: cookie
         z: 0
-        implicitSize: root.implicitSize
-        amplitude: implicitSize / 70
-        sides: 12
+        anchors.centerIn: parent
+        width: root.implicitSize
+        height: root.implicitSize
         color: root.colBackground
-
-        // 12 dots around the cookie
-        Repeater {
-            model: 12
-            Item {
-                required property int index
-                rotation: 360 / 12 * index
-                anchors.fill: parent
-                Rectangle {
-                    anchors {
-                        left: parent.left
-                        verticalCenter: parent.verticalCenter
-                        leftMargin: 10
-                    }
-                    implicitWidth: root.hourDotSize
-                    implicitHeight: implicitWidth
-                    radius: implicitWidth / 2
-                    color: root.colOnBackground
-                    opacity: 0.5
-                }
-            }
-        }
+        radius: 8
+        border.width: 1
+        border.color: root.colOnBackground
     }
 
     Column {
@@ -110,7 +91,7 @@ Item {
             x: parent.width / 2 - hourHandWidth / 2
             width: hourHandLength
             height: hourHandWidth
-            radius: hourHandWidth / 2
+            radius: 2
             color: root.colHourHand
         }
     }
@@ -125,7 +106,7 @@ Item {
             x: parent.width / 2 - minuteHandWidth / 2
             width: minuteHandLength
             height: minuteHandWidth
-            radius: minuteHandWidth / 2
+            radius: 2
             color: root.colMinuteHand
         }
     }
@@ -133,10 +114,10 @@ Item {
     // Center dot
     Rectangle {
         z: 4
-        color: root.colOnHourHand
+        color: root.colHourHand
         anchors.centerIn: parent
         implicitWidth: centerDotSize
         implicitHeight: implicitWidth
-        radius: implicitWidth / 2
+        radius: 2
     }
 }

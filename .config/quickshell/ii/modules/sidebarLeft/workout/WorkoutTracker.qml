@@ -254,28 +254,62 @@ Item {
             }
         }
         
-        // Stats
-        Rectangle {
+        // Stats with Mark Today Done button
+        RowLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            color: Appearance.colors.colLayer2
-            radius: 4
+            spacing: 8
             
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 8
-                spacing: 1
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                color: Appearance.colors.colLayer2
+                radius: 4
                 
-                StyledText {
-                    font.pixelSize: Appearance.font.pixelSize.smallest
-                    color: Appearance.colors.colOnLayer2
-                    text: "Completed"
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 8
+                    spacing: 1
+                    
+                    StyledText {
+                        font.pixelSize: Appearance.font.pixelSize.smallest
+                        color: Appearance.colors.colOnLayer2
+                        text: "Completed"
+                    }
+                    
+                    StyledText {
+                        font.pixelSize: Appearance.font.pixelSize.small
+                        color: Appearance.colors.colPrimary
+                        text: root.getCompletedCount() + "/" + root.getDaysInMonth(root.currentMonth, root.currentYear)
+                    }
+                }
+            }
+            
+            RippleButton {
+                Layout.preferredWidth: 120
+                Layout.preferredHeight: 40
+                buttonRadius: 4
+                colBackground: Appearance.colors.colPrimary
+                
+                contentItem: RowLayout {
+                    anchors.centerIn: parent
+                    spacing: 6
+                    
+                    MaterialSymbol {
+                        iconSize: 16
+                        fill: 1
+                        color: Appearance.colors.colOnPrimary
+                        text: "check_circle"
+                    }
+                    
+                    StyledText {
+                        text: "Mark Today"
+                        font.pixelSize: Appearance.font.pixelSize.small
+                        color: Appearance.colors.colOnPrimary
+                    }
                 }
                 
-                StyledText {
-                    font.pixelSize: Appearance.font.pixelSize.small
-                    color: Appearance.colors.colPrimary
-                    text: root.getCompletedCount() + "/" + root.getDaysInMonth(root.currentMonth, root.currentYear)
+                onClicked: {
+                    root.toggleDay(root.currentDay);
                 }
             }
         }

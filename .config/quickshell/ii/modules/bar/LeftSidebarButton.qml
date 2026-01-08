@@ -51,8 +51,8 @@ RippleButton {
     CustomIcon {
         id: distroIcon
         anchors.centerIn: parent
-        width: 17
-        height: 17
+        width: 16
+        height: 16
         source: Config.options.bar.topLeftIcon == 'distro' ? SystemInfo.distroIcon : `${Config.options.bar.topLeftIcon}-symbolic`
         colorize: true
         color: Appearance.colors.colOnLayer0

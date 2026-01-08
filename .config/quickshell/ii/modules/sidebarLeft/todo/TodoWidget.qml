@@ -239,7 +239,7 @@ Item {
                     Layout.rightMargin: 16
                     Layout.alignment: Qt.AlignLeft
                     color: Appearance.m3colors.m3onSurface
-                    font.pixelSize: Appearance.font.pixelSize.larger
+                    font.pixelSize: Appearance.font.pixelSize.normal
                     text: Translation.tr("Add task")
                 }
 

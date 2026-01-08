@@ -21,7 +21,7 @@ RippleButton {
     contentItem: StyledText {
         text: buttonText
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: Appearance.font.pixelSize.larger
+        font.pixelSize: Appearance.font.pixelSize.normal
         color: Appearance.colors.colOnLayer1
     }
 

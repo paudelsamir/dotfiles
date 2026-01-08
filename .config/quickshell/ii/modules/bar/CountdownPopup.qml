@@ -87,7 +87,7 @@ Scope {
                     spacing: 8
                     width: parent.width - 20
                     
-                    property int currentTab: 0 // 0 = Main Goal, 1 = Events
+                    property int currentTab: 0 // 0 = Main Goal, 1 = Active Events, 2 = Completed Events
 
                     // Header with tabs
                     Column {
@@ -124,7 +124,7 @@ Scope {
                             anchors.horizontalCenter: parent.horizontalCenter
                             
                             Rectangle {
-                                width: 100
+                                width: 80
                                 height: 24
                                 radius: Appearance.rounding.extraSmall
                                 color: contentColumn.currentTab === 0 ? 
@@ -155,7 +155,7 @@ Scope {
                             }
                             
                             Rectangle {
-                                width: 100
+                                width: 80
                                 height: 24
                                 radius: Appearance.rounding.extraSmall
                                 color: contentColumn.currentTab === 1 ? 
@@ -177,10 +177,41 @@ Scope {
                                 
                                 StyledText {
                                     anchors.centerIn: parent
-                                    text: Translation.tr("Events")
+                                    text: Translation.tr("Active")
                                     font.pixelSize: Appearance.font.pixelSize.small
                                     color: Appearance.colors.colOnSurfaceVariant
                                     opacity: contentColumn.currentTab === 1 ? 1.0 : 0.5
+                                    Behavior on opacity { NumberAnimation { duration: 150 } }
+                                }
+                            }
+                            
+                            Rectangle {
+                                width: 80
+                                height: 24
+                                radius: Appearance.rounding.extraSmall
+                                color: contentColumn.currentTab === 2 ? 
+                                       ColorUtils.applyAlpha(Appearance.colors.colLayer1, 0.2) :
+                                       "transparent"
+                                border.width: 1
+                                border.color: contentColumn.currentTab === 2 ?
+                                              ColorUtils.applyAlpha(Appearance.colors.colOnSurfaceVariant, 0.2) :
+                                              "transparent"
+                                              
+                                Behavior on color { ColorAnimation { duration: 150 } }
+                                Behavior on border.color { ColorAnimation { duration: 150 } }
+                                              
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: contentColumn.currentTab = 2
+                                }
+                                
+                                StyledText {
+                                    anchors.centerIn: parent
+                                    text: Translation.tr("Completed")
+                                    font.pixelSize: Appearance.font.pixelSize.small
+                                    color: Appearance.colors.colOnSurfaceVariant
+                                    opacity: contentColumn.currentTab === 2 ? 1.0 : 0.5
                                     Behavior on opacity { NumberAnimation { duration: 150 } }
                                 }
                             }
@@ -320,7 +351,7 @@ Scope {
                         }
                     }
                     
-                    // Events Tab Content
+                    // Events Tab Content - ACTIVE EVENTS
                     Column {
                         visible: contentColumn.currentTab === 1
                         Layout.alignment: Qt.AlignHCenter
@@ -582,14 +613,14 @@ Scope {
                             opacity: 0.3
                         }
                         
-                        // Events List
+                        // Active Events List
                         Column {
                             width: 280
                             anchors.horizontalCenter: parent.horizontalCenter
                             spacing: 6
                             
                             StyledText {
-                                text: Translation.tr("Your Events")
+                                text: Translation.tr("Active Events")
                                 font.pixelSize: Appearance.font.pixelSize.small
                                 font.weight: Font.Medium
                                 color: Appearance.colors.colOnSurfaceVariant
@@ -599,7 +630,8 @@ Scope {
                                 id: eventsRepeater
                                 model: {
                                     try {
-                                        return JSON.parse(GlobalStates.countdownEventsJson)
+                                        var allEvents = JSON.parse(GlobalStates.countdownEventsJson)
+                                        return allEvents.filter(e => !e.done)
                                     } catch(e) {
                                         return []
                                     }
@@ -675,12 +707,12 @@ Scope {
                                                 Layout.preferredHeight: 28
                                                 Layout.alignment: Qt.AlignVCenter
                                                 radius: Appearance.rounding.extraSmall
-                                                color: deleteButton.pressed ? ColorUtils.applyAlpha(Appearance.colors.colError, 0.7) :
-                                                       deleteButton.containsMouse ? ColorUtils.applyAlpha(Appearance.colors.colError, 0.5) :
+                                                color: doneButton.pressed ? ColorUtils.applyAlpha(Appearance.colors.colPrimary, 0.7) :
+                                                       doneButton.containsMouse ? ColorUtils.applyAlpha(Appearance.colors.colPrimary, 0.5) :
                                                        "transparent"
                                                 border.width: 1
-                                                border.color: deleteButton.containsMouse ? 
-                                                             ColorUtils.applyAlpha(Appearance.colors.colError, 0.6) : 
+                                                border.color: doneButton.containsMouse ? 
+                                                             ColorUtils.applyAlpha(Appearance.colors.colPrimary, 0.6) : 
                                                              "transparent"
                                                 
                                                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -688,13 +720,13 @@ Scope {
                                                 
                                                 MaterialSymbol {
                                                     anchors.centerIn: parent
-                                                    text: "delete"
+                                                    text: "check"
                                                     iconSize: Appearance.font.pixelSize.small
                                                     color: Appearance.colors.colOnSurfaceVariant
                                                 }
                                                 
                                                 MouseArea {
-                                                    id: deleteButton
+                                                    id: doneButton
                                                     anchors.fill: parent
                                                     hoverEnabled: true
                                                     cursorShape: Qt.PointingHandCursor
@@ -705,7 +737,7 @@ Scope {
                                                             events = JSON.parse(GlobalStates.countdownEventsJson)
                                                         } catch(e) {}
                                                         
-                                                        events.splice(index, 1)
+                                                        events[index].done = true
                                                         GlobalStates.countdownEventsJson = JSON.stringify(events)
                                                     }
                                                 }
@@ -718,7 +750,221 @@ Scope {
                             StyledText {
                                 visible: eventsRepeater.count === 0
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                text: Translation.tr("No events yet. Add one above!")
+                                text: Translation.tr("No active events. Add one above!")
+                                font.pixelSize: Appearance.font.pixelSize.extraSmall
+                                color: Appearance.colors.colOnSurfaceVariant
+                                opacity: 0.5
+                            }
+                        }
+                    }
+                    
+                    // Completed Events Tab Content
+                    Column {
+                        visible: contentColumn.currentTab === 2
+                        Layout.alignment: Qt.AlignHCenter
+                        spacing: 12
+                        Layout.fillWidth: true
+                        
+                        // Completed Events List
+                        Column {
+                            width: 280
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            spacing: 6
+                            
+                            StyledText {
+                                text: Translation.tr("Completed Events")
+                                font.pixelSize: Appearance.font.pixelSize.small
+                                font.weight: Font.Medium
+                                color: Appearance.colors.colOnSurfaceVariant
+                            }
+                            
+                            Repeater {
+                                id: completedRepeater
+                                model: {
+                                    try {
+                                        var allEvents = JSON.parse(GlobalStates.countdownEventsJson)
+                                        return allEvents.filter(e => e.done)
+                                    } catch(e) {
+                                        return []
+                                    }
+                                }
+                                
+                                delegate: Item {
+                                    width: 280
+                                    height: 48
+                                    readonly property int actualIndex: {
+                                        // Find actual index in full array
+                                        try {
+                                            var allEvents = JSON.parse(GlobalStates.countdownEventsJson)
+                                            var idx = allEvents.findIndex(e => e.name === modelData.name && e.date === modelData.date && e.done === true)
+                                            return idx
+                                        } catch(e) {
+                                            return -1
+                                        }
+                                    }
+                                    
+                                    Rectangle {
+                                        id: completedRow
+                                        anchors.fill: parent
+                                        color: completedMouseArea.containsMouse ? 
+                                               ColorUtils.applyAlpha(Appearance.colors.colTertiary, 0.2) :
+                                               ColorUtils.applyAlpha(Appearance.colors.colTertiary, 0.1)
+                                        radius: Appearance.rounding.extraSmall
+                                        border.width: 1
+                                        border.color: completedMouseArea.containsMouse ?
+                                                     ColorUtils.applyAlpha(Appearance.colors.colTertiary, 0.3) :
+                                                     ColorUtils.applyAlpha(Appearance.colors.colLayer0Border, 0.3)
+                                        
+                                        Behavior on color { ColorAnimation { duration: 150 } }
+                                        Behavior on border.color { ColorAnimation { duration: 150 } }
+                                        
+                                        MouseArea {
+                                            id: completedMouseArea
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                        }
+                                        
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            anchors.margins: 10
+                                            spacing: 10
+                                            
+                                            MaterialSymbol {
+                                                Layout.alignment: Qt.AlignVCenter
+                                                text: {
+                                                    var category = modelData.category || "event"
+                                                    if (category === "birthday") return "cake"
+                                                    if (category === "exam") return "school"
+                                                    if (category === "meeting") return "group"
+                                                    return "event"
+                                                }
+                                                iconSize: Appearance.font.pixelSize.normal
+                                                color: ColorUtils.applyAlpha(Appearance.colors.colOnSurfaceVariant, 0.5)
+                                            }
+                                            
+                                            Column {
+                                                Layout.fillWidth: true
+                                                Layout.alignment: Qt.AlignVCenter
+                                                spacing: 3
+                                                
+                                                StyledText {
+                                                    text: modelData.name
+                                                    font.pixelSize: Appearance.font.pixelSize.small
+                                                    font.weight: Font.Medium
+                                                    font.strikeout: true
+                                                    color: ColorUtils.applyAlpha(Appearance.colors.colOnSurfaceVariant, 0.6)
+                                                    elide: Text.ElideRight
+                                                    width: parent.width
+                                                }
+                                                
+                                                StyledText {
+                                                    text: modelData.date
+                                                    font.pixelSize: Appearance.font.pixelSize.extraSmall
+                                                    color: ColorUtils.applyAlpha(Appearance.colors.colOnSurfaceVariant, 0.4)
+                                                }
+                                            }
+                                            
+                                            Row {
+                                                Layout.alignment: Qt.AlignVCenter
+                                                spacing: 6
+                                                
+                                                // Revert button
+                                                Rectangle {
+                                                    width: 28
+                                                    height: 28
+                                                    radius: Appearance.rounding.extraSmall
+                                                    color: revertButton.pressed ? ColorUtils.applyAlpha(Appearance.colors.colPrimary, 0.7) :
+                                                           revertButton.containsMouse ? ColorUtils.applyAlpha(Appearance.colors.colPrimary, 0.5) :
+                                                           "transparent"
+                                                    border.width: 1
+                                                    border.color: revertButton.containsMouse ? 
+                                                                 ColorUtils.applyAlpha(Appearance.colors.colPrimary, 0.6) : 
+                                                                 "transparent"
+                                                    
+                                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                                    Behavior on border.color { ColorAnimation { duration: 150 } }
+                                                    
+                                                    MaterialSymbol {
+                                                        anchors.centerIn: parent
+                                                        text: "undo"
+                                                        iconSize: Appearance.font.pixelSize.small
+                                                        color: Appearance.colors.colOnSurfaceVariant
+                                                    }
+                                                    
+                                                    MouseArea {
+                                                        id: revertButton
+                                                        anchors.fill: parent
+                                                        hoverEnabled: true
+                                                        cursorShape: Qt.PointingHandCursor
+                                                        
+                                                        onClicked: {
+                                                            var events = []
+                                                            try {
+                                                                events = JSON.parse(GlobalStates.countdownEventsJson)
+                                                            } catch(e) {}
+                                                            
+                                                            var idx = parent.parent.parent.parent.parent.actualIndex
+                                                            if (idx >= 0 && idx < events.length) {
+                                                                events[idx].done = false
+                                                                GlobalStates.countdownEventsJson = JSON.stringify(events)
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                
+                                                // Delete button
+                                                Rectangle {
+                                                    width: 28
+                                                    height: 28
+                                                    radius: Appearance.rounding.extraSmall
+                                                    color: deleteButton.pressed ? ColorUtils.applyAlpha(Appearance.colors.colError, 0.7) :
+                                                           deleteButton.containsMouse ? ColorUtils.applyAlpha(Appearance.colors.colError, 0.5) :
+                                                           "transparent"
+                                                    border.width: 1
+                                                    border.color: deleteButton.containsMouse ? 
+                                                                 ColorUtils.applyAlpha(Appearance.colors.colError, 0.6) : 
+                                                                 "transparent"
+                                                    
+                                                    Behavior on color { ColorAnimation { duration: 150 } }
+                                                    Behavior on border.color { ColorAnimation { duration: 150 } }
+                                                    
+                                                    MaterialSymbol {
+                                                        anchors.centerIn: parent
+                                                        text: "delete"
+                                                        iconSize: Appearance.font.pixelSize.small
+                                                        color: Appearance.colors.colOnSurfaceVariant
+                                                    }
+                                                    
+                                                    MouseArea {
+                                                        id: deleteButton
+                                                        anchors.fill: parent
+                                                        hoverEnabled: true
+                                                        cursorShape: Qt.PointingHandCursor
+                                                        
+                                                        onClicked: {
+                                                            var events = []
+                                                            try {
+                                                                events = JSON.parse(GlobalStates.countdownEventsJson)
+                                                            } catch(e) {}
+                                                            
+                                                            var idx = parent.parent.parent.parent.parent.actualIndex
+                                                            if (idx >= 0 && idx < events.length) {
+                                                                events.splice(idx, 1)
+                                                                GlobalStates.countdownEventsJson = JSON.stringify(events)
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            StyledText {
+                                visible: completedRepeater.count === 0
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                text: Translation.tr("No completed events yet!")
                                 font.pixelSize: Appearance.font.pixelSize.extraSmall
                                 color: Appearance.colors.colOnSurfaceVariant
                                 opacity: 0.5

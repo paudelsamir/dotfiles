@@ -4,8 +4,6 @@ import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
 import "./todo/"
-import "./monthlyGoals/"
-import "./workout/"
 import "./pomodoro/"
 import QtQuick
 import QtQuick.Controls
@@ -19,8 +17,7 @@ Item {
     required property var scopeRoot
     anchors.fill: parent
     property var tabButtonList: [
-        {"icon": "task_alt", "name": Translation.tr("Todo")},
-        {"icon": "fitness_center", "name": Translation.tr("Workout")}
+        {"icon": "task_alt", "name": Translation.tr("Todo")}
     ]
     property int selectedTab: 0
 
@@ -104,12 +101,12 @@ Item {
                         }
 
                         onClicked: {
-                            Quickshell.execDetached(["code", "/home/sam/Github/365DaysOfData"]);
-                            Quickshell.execDetached(["bash", "-c", "brave --new-window https://github.com/paudelsamir/365DaysOfData & sleep 0.3 && hyprctl dispatch fullscreen 1"]);
+                            Quickshell.execDetached(["code", "/home/sam/Github/2026"]);
+                            Quickshell.execDetached(["bash", "-c", "brave --new-window https://github.com/paudelsamir/2026 & sleep 0.3 && hyprctl dispatch fullscreen 1"]);
                         }
 
                         StyledToolTip {
-                            text: "365: AI Learning & Worklog"
+                            text: "2026: Transformation"
                         }
                     }
 
@@ -134,7 +131,33 @@ Item {
                         }
 
                         StyledToolTip {
-                            text: "DSA: Interview Prep Workspace"
+                            text: "DSA"
+                        }
+                    }
+                    
+                    GroupButton {
+                        baseWidth: 36
+                        baseHeight: 36
+                        buttonRadius: 18
+                        toggled: false
+                        color: Appearance.colors.colLayer0
+
+                        contentItem: MaterialSymbol {
+                            anchors.centerIn: parent
+                            iconSize: 18
+                            fill: 0
+                            color: Appearance.colors.colOnLayer1
+                            text: "trending_up"
+                        }
+
+                        onClicked: {
+                            Hyprland.dispatch("togglespecialworkspace", "firefox");
+                            Quickshell.execDetached(["bash", "-c", "sleep 0.2 && hyprctl dispatch movetoworkspacesilent special:firefox,^(firefox)$"]);
+                            Quickshell.execDetached(["firefox", "https://meroshare.cdsc.com.np/#/login", "https://keep.google.com"]);
+                        }
+
+                        StyledToolTip {
+                            text: "Share Market"
                         }
                     }
                 }
@@ -175,32 +198,6 @@ Item {
                 ButtonGroup {
                     spacing: 8
                     
-                    GroupButton {
-                        baseWidth: 36
-                        baseHeight: 36
-                        buttonRadius: 18
-                        toggled: false
-                        color: Appearance.colors.colLayer0
-
-                        contentItem: MaterialSymbol {
-                            anchors.centerIn: parent
-                            iconSize: 18
-                            fill: 0
-                            color: Appearance.colors.colOnLayer1
-                            text: "trending_up"
-                        }
-
-                        onClicked: {
-                            Hyprland.dispatch("togglespecialworkspace", "firefox");
-                            Quickshell.execDetached(["bash", "-c", "sleep 0.2 && hyprctl dispatch movetoworkspacesilent special:firefox,^(firefox)$"]);
-                            Quickshell.execDetached(["firefox", "https://meroshare.cdsc.com.np/#/login", "https://keep.google.com"]);
-                        }
-
-                        StyledToolTip {
-                            text: "Meroshare"
-                        }
-                    }
-
                     GroupButton {
                         baseWidth: 36
                         baseHeight: 36
@@ -294,27 +291,15 @@ Item {
                 anchors.margins: 10
                 spacing: 5
 
-                PrimaryTabBar { // Tab strip
-                    id: tabBar
-                    Layout.fillHeight: false
-                    tabButtonList: root.tabButtonList
-                    externalTrackedTab: root.selectedTab
-                    function onCurrentIndexChanged(currentIndex) {
-                        root.selectedTab = currentIndex
-                    }
-                }
-
                 StackLayout {
                     id: stackView
-                    Layout.topMargin: 5
+                    Layout.topMargin: 0
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     
                     currentIndex: root.selectedTab
 
                     TodoWidget {}
-
-                    WorkoutTracker {}
                 }
             }
         }

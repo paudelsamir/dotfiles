@@ -11,6 +11,7 @@ Item {
     property int renderPoints: 360
     property color color: "#605790"
     property alias strokeWidth: shapePath.strokeWidth
+    property alias strokeColor: shapePath.strokeColor
 
     implicitWidth: implicitSize
     implicitHeight: implicitSize

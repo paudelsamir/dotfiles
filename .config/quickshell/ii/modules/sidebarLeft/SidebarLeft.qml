@@ -53,7 +53,7 @@ Scope { // Scope
             }
 
             exclusiveZone: 0
-            implicitWidth: Appearance.sizes.sidebarWidthExtended + Appearance.sizes.elevationMargin
+            implicitWidth: Appearance.sizes.sidebarWidth + Appearance.sizes.elevationMargin
             WlrLayershell.namespace: "quickshell:sidebarLeft"
             // Hyprland 0.49: OnDemand is Exclusive, Exclusive just breaks click-outside-to-close
             // WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
