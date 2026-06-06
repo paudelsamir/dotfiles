@@ -1,0 +1,47 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// 80 — Layer rules
+// ─────────────────────────────────────────────────────────────────────────────
+// Docs: https://niri-wm.github.io/niri/Configuration:-Layer-Rules
+//
+// Layer-shell surfaces are used by bars, panels, wallpaper renderers, and
+// overlays. iNiR uses them for its backdrop wallpaper surfaces.
+//
+// place-within-backdrop = true tells Niri to render the surface behind
+// windows but above the compositor background, so iNiR's wallpaper shows
+// between the desktop background color and the tiled windows.
+//
+// NOTE: Niri's layer-rule only supports match, opacity,
+// place-within-backdrop, and block-out-from. Properties like layer,
+// keyboard-focus, and size-policy are NOT valid here (those are
+// controlled by the application via the layer-shell protocol).
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Backdrop surfaces (wallpaper) — render behind windows.
+layer-rule {
+    match namespace="quickshell:iiBackdrop"
+    place-within-backdrop true
+    opacity 1.0
+}
+
+layer-rule {
+    match namespace="quickshell:wBackdrop"
+    place-within-backdrop true
+    opacity 1.0
+}
+
+// Lock screen — block from screencast for privacy.
+layer-rule {
+    match namespace="quickshell:lock"
+    block-out-from "screencast"
+}
+
+// Session screen — block from screencast for privacy.
+layer-rule {
+    match namespace="quickshell:wSession"
+    block-out-from "screencast"
+}
+
+layer-rule {
+    match namespace="quickshell:session"
+    block-out-from "screencast"
+}

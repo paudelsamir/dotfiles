@@ -1,0 +1,34 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// 90 — Your personal overrides
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// This file is YOURS. iNiR updates will never overwrite it.
+// Put any custom configuration here: extra binds, per-app window rules,
+// output configuration, named workspaces, etc.
+//
+// Since Niri evaluates config top-to-bottom, settings here take effect
+// after all other config.d files. For window-rule properties, all matching
+// rules accumulate. For scalar values (like gaps), the last one wins.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Flush tiling: no space between windows or screen edges.
+layout {
+    gaps 4
+    default-column-width {
+        proportion 1.0
+    }
+    shadow {
+        off
+    }
+    tab-indicator {
+        gap 0
+        gaps-between-tabs 0
+        corner-radius 0
+    }
+}
+
+// Pin 144Hz scale on the laptop panel (same as Hyprland monitors.conf).
+output "eDP-2" {
+    mode "1920x1080@144.003"
+    scale 1
+}
