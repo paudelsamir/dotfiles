@@ -73,7 +73,7 @@ gestures {
 
 // ── Cursor theme ────────────────────────────────────────────────────────────
 cursor {
-    xcursor-theme "Bibata-Modern-Classic"
+    xcursor-theme "breeze_cursors"
     xcursor-size 20
 }
 

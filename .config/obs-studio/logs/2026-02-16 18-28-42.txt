@@ -1,0 +1,255 @@
+18:28:42.854: Platform: Wayland
+18:28:42.854: CPU Name: AMD Ryzen 7 6800H with Radeon Graphics
+18:28:42.854: CPU Speed: 1095.838MHz
+18:28:42.855: Physical Cores: 8, Logical Cores: 16
+18:28:42.855: Physical Memory: 15221MB Total, 4938MB Free
+18:28:42.855: Kernel Version: Linux 6.18.7-arch1-1
+18:28:42.855: Distribution: "Arch Linux" Unknown
+18:28:42.855: Desktop Environment: Hyprland (Hyprland)
+18:28:42.855: Session Type: wayland
+18:28:42.856: Current Date/Time: 2026-02-16, 06:28:42 PM
+18:28:42.856: Browser Hardware Acceleration: true
+18:28:42.856: Qt Version: 6.10.1 (runtime), 6.10.1 (compiled)
+18:28:42.856: Portable mode: false
+18:28:42.897: OBS 32.0.4 (linux)
+18:28:42.897: ---------------------------------
+18:28:42.898: ---------------------------------
+18:28:42.898: audio settings reset:
+18:28:42.898: 	samples per sec: 48000
+18:28:42.898: 	speakers:        2
+18:28:42.898: 	max buffering:   960 milliseconds
+18:28:42.898: 	buffering type:  dynamically increasing
+18:28:42.899: ---------------------------------
+18:28:42.899: Initializing OpenGL...
+18:28:42.899: Using EGL/Wayland
+18:28:42.914: Initialized EGL 1.5
+18:28:42.930: Loading up OpenGL on adapter AMD AMD Radeon 680M (radeonsi, rembrandt, LLVM 21.1.6, DRM 3.64, 6.18.7-arch1-1)
+18:28:42.930: OpenGL loaded successfully, version 4.6 (Core Profile) Mesa 25.3.4-arch1.1, shading language 4.60
+18:28:42.962: ---------------------------------
+18:28:42.962: video settings reset:
+18:28:42.962: 	base resolution:   1920x1080
+18:28:42.962: 	output resolution: 1280x720
+18:28:42.962: 	downscale filter:  Bicubic
+18:28:42.962: 	fps:               30/1
+18:28:42.962: 	format:            NV12
+18:28:42.962: 	YUV mode:          Rec. 709/Partial
+18:28:42.962: NV12 texture support enabled
+18:28:42.962: P010 texture support not available
+18:28:42.966: Audio monitoring device:
+18:28:42.966: 	name: Default
+18:28:42.966: 	id: default
+18:28:42.968: ---------------------------------
+18:28:42.969: Failed to load 'en-US' text for module: 'decklink-captions.so'
+18:28:42.970: Failed to load 'en-US' text for module: 'decklink-output-ui.so'
+18:28:42.971: A DeckLink iterator could not be created.  The DeckLink drivers may not be installed
+18:28:42.971: Failed to initialize module 'decklink.so'
+18:28:43.101: [pipewire] Available capture sources:
+18:28:43.101: [pipewire]     - Monitor source
+18:28:43.102: [pipewire]     - Window source
+18:28:43.110: v4l2loopback not installed, virtual camera not registered
+18:28:43.435: VAAPI: API version 1.22
+18:28:43.483: FFmpeg VAAPI H264 encoding supported
+18:28:43.705: FFmpeg VAAPI AV1 encoding not supported
+18:28:43.917: FFmpeg VAAPI HEVC encoding supported
+18:28:44.063: [obs-nvenc] NVENC version: 13.0 (compiled) / 13.0 (driver), CUDA driver version: 13.10, AV1 supported: false
+18:28:44.521: [obs-websocket] [obs_module_load] you can haz websockets (Version: 5.6.3 | RPC Version: 1)
+18:28:44.521: [obs-websocket] [obs_module_load] Qt version (compile-time): 6.10.1 | Qt version (run-time): 6.10.1
+18:28:44.521: [obs-websocket] [obs_module_load] Linked ASIO Version: 103600
+18:28:44.524: [obs-websocket] [obs_module_load] Module loaded.
+18:28:44.526: ---------------------------------
+18:28:44.526:   Loaded Modules:
+18:28:44.526:     text-freetype2.so
+18:28:44.526:     rtmp-services.so
+18:28:44.526:     obs-x264.so
+18:28:44.526:     obs-websocket.so
+18:28:44.526:     obs-webrtc.so
+18:28:44.526:     obs-vst.so
+18:28:44.526:     obs-transitions.so
+18:28:44.526:     obs-qsv11.so
+18:28:44.526:     obs-outputs.so
+18:28:44.526:     obs-nvenc.so
+18:28:44.526:     obs-libfdk.so
+18:28:44.526:     obs-filters.so
+18:28:44.526:     obs-ffmpeg.so
+18:28:44.526:     linux-v4l2.so
+18:28:44.526:     linux-pulseaudio.so
+18:28:44.526:     linux-pipewire.so
+18:28:44.526:     linux-jack.so
+18:28:44.526:     linux-capture.so
+18:28:44.526:     linux-alsa.so
+18:28:44.526:     image-source.so
+18:28:44.526:     frontend-tools.so
+18:28:44.526:     decklink-output-ui.so
+18:28:44.526:     decklink-captions.so
+18:28:44.526: ---------------------------------
+18:28:44.526: ---------------------------------
+18:28:44.526: Available Encoders:
+18:28:44.526:   Video Encoders:
+18:28:44.526: 	- ffmpeg_svt_av1 (SVT-AV1)
+18:28:44.526: 	- ffmpeg_aom_av1 (AOM AV1)
+18:28:44.527: 	- ffmpeg_vaapi_tex (FFmpeg VAAPI H.264)
+18:28:44.527: 	- hevc_ffmpeg_vaapi_tex (FFmpeg VAAPI HEVC)
+18:28:44.527: 	- obs_nvenc_h264_tex (NVIDIA NVENC H.264)
+18:28:44.527: 	- obs_nvenc_hevc_tex (NVIDIA NVENC HEVC)
+18:28:44.527: 	- obs_x264 (x264)
+18:28:44.527:   Audio Encoders:
+18:28:44.527: 	- ffmpeg_aac (FFmpeg AAC)
+18:28:44.527: 	- ffmpeg_opus (FFmpeg Opus)
+18:28:44.527: 	- ffmpeg_pcm_s16le (FFmpeg PCM (16-bit))
+18:28:44.527: 	- ffmpeg_pcm_s24le (FFmpeg PCM (24-bit))
+18:28:44.527: 	- ffmpeg_pcm_f32le (FFmpeg PCM (32-bit float))
+18:28:44.527: 	- ffmpeg_alac (FFmpeg ALAC (24-bit))
+18:28:44.527: 	- ffmpeg_flac (FFmpeg FLAC (16-bit))
+18:28:44.527: 	- libfdk_aac (libfdk AAC)
+18:28:44.527: ==== Startup complete ===============================================
+18:28:44.586: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Connection already associated with an application ID")
+18:28:44.586: All scene data cleared
+18:28:44.586: ------------------------------------------------
+18:28:44.590: Device for 'Audio Output Capture' source Desktop Audio is also used for audio monitoring.
+18:28:44.590: Deduplication logic is being applied to all monitored sources.
+18:28:44.590: pulse-input: Server name: 'PulseAudio (on PipeWire 1.4.10) 15.0.0'
+18:28:44.590: pulse-input: Audio format: s24le, 48000 Hz, 2 channels
+18:28:44.590: pulse-input: Sample format s24le not supported by OBS,using float32le instead for recording
+18:28:44.590: pulse-input: Started recording from 'alsa_output.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo.monitor'
+18:28:44.590: [Loaded global audio device]: 'Desktop Audio'
+18:28:44.595: Device for 'Audio Output Capture' source Desktop Audio 2 is also used for audio monitoring.
+18:28:44.595: Deduplication logic is being applied to all monitored sources.
+18:28:44.596: pulse-input: Server name: 'PulseAudio (on PipeWire 1.4.10) 15.0.0'
+18:28:44.596: pulse-input: Audio format: s24le, 48000 Hz, 2 channels
+18:28:44.596: pulse-input: Sample format s24le not supported by OBS,using float32le instead for recording
+18:28:44.596: pulse-input: Started recording from 'alsa_output.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo.monitor'
+18:28:44.596: [Loaded global audio device]: 'Desktop Audio 2'
+18:28:44.596: pulse-input: Server name: 'PulseAudio (on PipeWire 1.4.10) 15.0.0'
+18:28:44.596: pulse-input: Audio format: s16le, 48000 Hz, 2 channels
+18:28:44.596: pulse-input: Started recording from 'alsa_input.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo'
+18:28:44.596: [Loaded global audio device]: 'Mic/Aux'
+18:28:44.597: pulse-input: Server name: 'PulseAudio (on PipeWire 1.4.10) 15.0.0'
+18:28:44.598: pulse-input: Audio format: s16le, 48000 Hz, 2 channels
+18:28:44.598: pulse-input: Started recording from 'alsa_input.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo'
+18:28:44.598: [Loaded global audio device]: 'Mic/Aux 2'
+18:28:44.599: PipeWire initialized
+18:28:44.600: Switched to scene 'whats up?'
+18:28:44.601: ------------------------------------------------
+18:28:44.601: Loaded scenes:
+18:28:44.601: - scene 'whats up?':
+18:28:44.601:     - source: 'Video Capture Device (PipeWire) (BETA)' (pipewire-camera-source)
+18:28:44.601:     - source: 'Date text' (text_ft2_source_v2)
+18:28:44.601: - scene 'Stream':
+18:28:44.601:     - source: 'Kick' (pipewire-screen-capture-source)
+18:28:44.601:     - source: 'webcam' (pipewire-camera-source)
+18:28:44.601: ------------------------------------------------
+18:28:44.632: Device for 'Audio Output Capture' source Desktop Audio is also used for audio monitoring.
+18:28:44.632: Deduplication logic is being applied to all monitored sources.
+18:28:44.638: Device for 'Audio Output Capture' source Desktop Audio 2 is also used for audio monitoring.
+18:28:44.638: Deduplication logic is being applied to all monitored sources.
+18:28:44.673: [camera-portal] Successfully accessed cameras
+18:28:44.673: [pipewire] Screencast session created
+18:28:44.769: [pipewire] Server version: 1.4.10
+18:28:44.769: [pipewire] Library version: 1.4.10
+18:28:44.769: [pipewire] Header version: 1.4.9
+18:28:44.769: [pipewire] Created registry 0x5617e032cf80
+18:28:44.769: [camera-portal] Found device v4l2_input.pci-0000_05_00.3-usb-0_4_1.0
+18:28:44.769: [camera-portal] streaming camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+18:28:44.769: [pipewire] Created stream 0x7f4090002e70
+18:28:44.769: [pipewire] Stream 0x7f4090002e70 state: "connecting" (error: none)
+18:28:44.770: [pipewire] Playing stream 0x7f4090002e70
+18:28:44.770: [camera-portal] streaming camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+18:28:44.770: [pipewire] Created stream 0x7f40900162a0
+18:28:44.770: [pipewire] Stream 0x7f40900162a0 state: "connecting" (error: none)
+18:28:44.770: [pipewire] Playing stream 0x7f40900162a0
+18:28:44.770: [pipewire] Stream 0x7f4090002e70 state: "paused" (error: none)
+18:28:44.770: [pipewire] Stream 0x7f40900162a0 state: "paused" (error: none)
+18:28:44.888: [pipewire] Negotiated format:
+18:28:44.888: [pipewire]     Format: 4 (Spa:Enum:VideoFormat:YUY2)
+18:28:44.888: [pipewire]     Size: 1280x720
+18:28:44.888: [pipewire]     Framerate: 10/1
+18:28:44.890: [pipewire] Negotiated format:
+18:28:44.890: [pipewire]     Format: 4 (Spa:Enum:VideoFormat:YUY2)
+18:28:44.890: [pipewire]     Size: 1280x720
+18:28:44.890: [pipewire]     Framerate: 10/1
+18:28:44.891: [pipewire] Stream 0x7f4090002e70 state: "streaming" (error: none)
+18:28:44.895: [pipewire] Stream 0x7f40900162a0 state: "streaming" (error: none)
+18:28:45.159: adding 21 milliseconds of audio buffering, total audio buffering is now 21 milliseconds (source: Desktop Audio)
+18:28:45.159: 
+18:28:45.245: adding 21 milliseconds of audio buffering, total audio buffering is now 42 milliseconds (source: Mic/Aux)
+18:28:45.245: 
+18:28:45.873: [pipewire] Asking for monitor and window
+18:28:45.882: [pipewire] source selected, setting up screencast
+18:28:45.885: [pipewire] Server version: 1.4.10
+18:28:45.885: [pipewire] Library version: 1.4.10
+18:28:45.885: [pipewire] Header version: 1.4.9
+18:28:45.885: [pipewire] Created stream 0x5617e162d9d0
+18:28:45.885: [pipewire] Stream 0x5617e162d9d0 state: "connecting" (error: none)
+18:28:45.885: [pipewire] Playing stream 0x5617e162d9d0
+18:28:45.886: [pipewire] Stream 0x5617e162d9d0 state: "paused" (error: none)
+18:28:45.890: [pipewire] Negotiated format:
+18:28:45.890: [pipewire]     Format: 8 (Spa:Enum:VideoFormat:BGRx)
+18:28:45.890: [pipewire]     Modifier: 0x0
+18:28:45.890: [pipewire]     Size: 1920x1080
+18:28:45.890: [pipewire]     Framerate: 0/1
+18:28:45.890: [pipewire] Negotiated format:
+18:28:45.890: [pipewire]     Format: 8 (Spa:Enum:VideoFormat:BGRx)
+18:28:45.890: [pipewire]     Modifier: 0x20000001056bb03
+18:28:45.890: [pipewire]     Size: 1920x1080
+18:28:45.890: [pipewire]     Framerate: 0/1
+18:28:45.891: [pipewire] Stream 0x5617e162d9d0 state: "streaming" (error: none)
+18:28:45.897: Cannot create EGLImage: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+18:28:45.897: [pipewire] Renegotiating stream
+18:28:45.898: [pipewire] Stream 0x5617e162d9d0 state: "paused" (error: none)
+18:28:45.898: [pipewire] Negotiated format:
+18:28:45.898: [pipewire]     Format: 8 (Spa:Enum:VideoFormat:BGRx)
+18:28:45.898: [pipewire]     Modifier: 0x20000001056bb03
+18:28:45.898: [pipewire]     Size: 1920x1080
+18:28:45.898: [pipewire]     Framerate: 0/1
+18:28:45.898: [pipewire] Negotiated format:
+18:28:45.898: [pipewire]     Format: 8 (Spa:Enum:VideoFormat:BGRx)
+18:28:45.898: [pipewire]     Modifier: 0x200000010567b03
+18:28:45.898: [pipewire]     Size: 1920x1080
+18:28:45.898: [pipewire]     Framerate: 0/1
+18:28:45.899: [pipewire] Stream 0x5617e162d9d0 state: "streaming" (error: none)
+18:28:45.914: Cannot create EGLImage: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+18:28:45.914: [pipewire] Renegotiating stream
+18:28:45.914: [pipewire] Stream 0x5617e162d9d0 state: "paused" (error: none)
+18:28:45.915: [pipewire] Negotiated format:
+18:28:45.915: [pipewire]     Format: 8 (Spa:Enum:VideoFormat:BGRx)
+18:28:45.915: [pipewire]     Modifier: 0x200000010567b03
+18:28:45.915: [pipewire]     Size: 1920x1080
+18:28:45.915: [pipewire]     Framerate: 0/1
+18:28:45.915: [pipewire] Negotiated format:
+18:28:45.915: [pipewire]     Format: 8 (Spa:Enum:VideoFormat:BGRx)
+18:28:45.915: [pipewire]     Modifier: 0x200000010537b03
+18:28:45.915: [pipewire]     Size: 1920x1080
+18:28:45.915: [pipewire]     Framerate: 0/1
+18:28:45.916: [pipewire] Stream 0x5617e162d9d0 state: "streaming" (error: none)
+18:28:45.931: Cannot create EGLImage: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+18:28:45.931: [pipewire] Renegotiating stream
+18:28:45.931: [pipewire] Stream 0x5617e162d9d0 state: "paused" (error: none)
+18:28:45.931: [pipewire] Negotiated format:
+18:28:45.931: [pipewire]     Format: 8 (Spa:Enum:VideoFormat:BGRx)
+18:28:45.931: [pipewire]     Modifier: 0x200000010537b03
+18:28:45.931: [pipewire]     Size: 1920x1080
+18:28:45.931: [pipewire]     Framerate: 0/1
+18:28:45.932: [pipewire] Negotiated format:
+18:28:45.932: [pipewire]     Format: 8 (Spa:Enum:VideoFormat:BGRx)
+18:28:45.932: [pipewire]     Modifier: 0x200000010401b03
+18:28:45.932: [pipewire]     Size: 1920x1080
+18:28:45.932: [pipewire]     Framerate: 0/1
+18:28:45.933: [pipewire] Stream 0x5617e162d9d0 state: "streaming" (error: none)
+18:29:43.781: ==== Shutting down ==================================================
+18:29:43.785: pulse-input: Stopped recording from 'alsa_output.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo.monitor'
+18:29:43.785: pulse-input: Got 2367 packets with 2840400 frames
+18:29:43.785: pulse-input: Stopped recording from 'alsa_output.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo.monitor'
+18:29:43.785: pulse-input: Got 2362 packets with 2834400 frames
+18:29:43.785: Deduplication logic stopped.
+18:29:43.785: pulse-input: Stopped recording from 'alsa_input.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo'
+18:29:43.785: pulse-input: Got 2363 packets with 2835600 frames
+18:29:43.785: pulse-input: Stopped recording from 'alsa_input.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo'
+18:29:43.785: pulse-input: Got 2362 packets with 2834400 frames
+18:29:43.786: [pipewire] Stream 0x7f4090002e70 state: "paused" (error: none)
+18:29:43.787: [pipewire] Stream 0x7f4090002e70 state: "unconnected" (error: none)
+18:29:43.789: [pipewire] Stream 0x5617e162d9d0 state: "paused" (error: none)
+18:29:43.789: [pipewire] Stream 0x5617e162d9d0 state: "unconnected" (error: none)
+18:29:43.790: [pipewire] Stream 0x7f40900162a0 state: "paused" (error: none)
+18:29:43.791: [pipewire] Stream 0x7f40900162a0 state: "unconnected" (error: none)
+18:29:43.820: All scene data cleared
+18:29:43.820: ------------------------------------------------

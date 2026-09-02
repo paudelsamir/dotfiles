@@ -37,8 +37,8 @@ Singleton {
     signal bindError(string message)
 
     // ── Script paths ──────────────────────────────────────────────────────
-    readonly property string parserScript: FileUtils.trimFileProtocol(Qt.resolvedUrl("../scripts/parse_niri_keybinds.py"))
-    readonly property string niriConfigScript: FileUtils.trimFileProtocol(Qt.resolvedUrl("../scripts/niri-config.py"))
+    readonly property string parserScript: FileUtils.trimFileProtocol(Qt.resolvedUrl("../../scripts/parse_niri_keybinds.py"))
+    readonly property string niriConfigScript: FileUtils.trimFileProtocol(Qt.resolvedUrl("../../scripts/niri-config.py"))
 
     // Internal: pending key combos tracked for signal emission
     property string _pendingSetCombo: ""
@@ -278,10 +278,10 @@ Singleton {
             ]}]
         },
         {
-            name: "Shell",
+            name: "iNiR Shell",
             children: [{ keybinds: [
-                { mods: ["Super"], key: "Space", comment: "Overview" },
-                { mods: ["Super"], key: "G", comment: "Overlay" },
+                { mods: ["Super"], key: "Space", comment: "iNiR Overview" },
+                { mods: ["Super"], key: "G", comment: "iNiR Overlay" },
                 { mods: ["Super"], key: "V", comment: "Clipboard" },
                 { mods: ["Super"], key: "Comma", comment: "Settings" },
                 { mods: ["Super"], key: "Slash", comment: "Cheatsheet" },

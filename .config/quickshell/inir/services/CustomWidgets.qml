@@ -101,6 +101,7 @@ Singleton {
                     resizableAxes: m.resizableAxes || {},
                     defaultSize: m.defaultSize || { width: 200, height: 100 },
                     defaultConfig: m.defaultConfig || {},
+                    semanticPalette: m.semanticPalette ?? false,
                     valid: warnings.length === 0,
                     warnings: warnings
                 });

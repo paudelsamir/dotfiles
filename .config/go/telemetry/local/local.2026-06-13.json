@@ -1,0 +1,62 @@
+{
+ "Week": "2026-06-13",
+ "LastWeek": "",
+ "X": 0.6190962998054554,
+ "Programs": [
+  {
+   "Program": "cmd/asm",
+   "Version": "devel",
+   "GoVersion": "devel",
+   "GOOS": "linux",
+   "GOARCH": "amd64",
+   "Counters": {},
+   "Stacks": {}
+  },
+  {
+   "Program": "cmd/compile",
+   "Version": "devel",
+   "GoVersion": "devel",
+   "GOOS": "linux",
+   "GOARCH": "amd64",
+   "Counters": {
+    "compile/invocations": 16
+   },
+   "Stacks": {}
+  },
+  {
+   "Program": "cmd/go",
+   "Version": "devel",
+   "GoVersion": "devel",
+   "GOOS": "linux",
+   "GOARCH": "amd64",
+   "Counters": {
+    "go/build/flag:o": 1180,
+    "go/buildcache/hit": 814,
+    "go/cgo:enabled": 1180,
+    "go/goexperiment:nodwarf5": 1180,
+    "go/goroot:usr-lib-go": 1180,
+    "go/invocations": 1180,
+    "go/mode:module": 1180,
+    "go/platform/host/linux/major-version:7": 1180,
+    "go/platform/host/linux/version:7-0": 1180,
+    "go/platform/target/goamd64:v1": 1180,
+    "go/platform/target/goarch:amd64": 1180,
+    "go/platform/target/goos:linux": 1180,
+    "go/subcommand:build": 1180
+   },
+   "Stacks": {}
+  },
+  {
+   "Program": "cmd/link",
+   "Version": "devel",
+   "GoVersion": "devel",
+   "GOOS": "linux",
+   "GOARCH": "amd64",
+   "Counters": {
+    "link/invocations": 16
+   },
+   "Stacks": {}
+  }
+ ],
+ "Config": "v0.0.0-0"
+}

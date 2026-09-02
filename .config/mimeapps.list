@@ -1,5 +1,5 @@
 [Default Applications]
-text/html=brave-browser.desktop
+text/html=firefox.desktop
 x-scheme-handler/http=brave-browser.desktop
 x-scheme-handler/https=brave-browser.desktop
 x-scheme-handler/about=brave-browser.desktop
@@ -7,10 +7,11 @@ x-scheme-handler/unknown=brave-browser.desktop
 x-scheme-handler/discord=vesktop.desktop
 text/markdown=code.desktop
 x-scheme-handler/viber=viber.desktop
-text/plain=org.gnome.TextEditor.desktop
-text/x-shellscript=org.gnome.TextEditor.desktop
-text/x-python=org.gnome.TextEditor.desktop
-text/x-script.python=org.gnome.TextEditor.desktop
+text/plain=code.desktop
+text/x-shellscript=code.desktop
+text/x-python=code.desktop
+text/x-script.python=code.desktop
+x-scheme-handler/notion=notion.desktop
 
 [Added Associations]
 text/markdown=code.desktop;

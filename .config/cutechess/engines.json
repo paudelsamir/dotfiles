@@ -1,0 +1,50 @@
+[
+	{
+		"command" : "./sunfish",
+		"name" : "sunfish",
+		"protocol" : "uci",
+		"stderrFile" : "",
+		"timeoutScaleFactor" : 1,
+		"workingDirectory" : "/home/sam/Github/Projects/chesssense/sunfish-from-scratch"
+	},
+	{
+		"command" : "./get_native_properties.sh",
+		"name" : "get_native_properties.sh",
+		"protocol" : "uci",
+		"stderrFile" : "",
+		"timeoutScaleFactor" : 1,
+		"workingDirectory" : "/home/sam/Github/Stockfish/scripts"
+	},
+	{
+		"command" : "./net.sh",
+		"name" : "net.sh",
+		"protocol" : "uci",
+		"stderrFile" : "",
+		"timeoutScaleFactor" : 1,
+		"workingDirectory" : "/home/sam/Github/Stockfish/scripts"
+	},
+	{
+		"command" : "/home/sam/Github/Stockfish/tests/perft.sh",
+		"name" : "main.cpp",
+		"protocol" : "uci",
+		"stderrFile" : "",
+		"timeoutScaleFactor" : 1,
+		"workingDirectory" : "/home/sam/Github/Stockfish/src"
+	},
+	{
+		"command" : "/home/sam/Github/Stockfish/tests/perft.sh",
+		"name" : "main.cpp",
+		"protocol" : "uci",
+		"stderrFile" : "",
+		"timeoutScaleFactor" : 1,
+		"workingDirectory" : "/home/sam/Github/Stockfish/src"
+	},
+	{
+		"command" : "/home/sam/Github/Stockfish/tests/perft.sh",
+		"name" : "main.cpp",
+		"protocol" : "uci",
+		"stderrFile" : "",
+		"timeoutScaleFactor" : 1,
+		"workingDirectory" : "/home/sam/Github/Stockfish/src"
+	}
+]

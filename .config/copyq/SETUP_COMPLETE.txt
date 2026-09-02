@@ -1,0 +1,26 @@
+CopyQ Clipboard Manager Setup - Complete ✓
+==========================================
+
+Configuration Complete:
+✓ CopyQ started as daemon and autostart enabled
+✓ Super+V (Meta+V) shortcut configured
+✓ Image preview support enabled
+✓ Clipboard history: 1000 items max
+✓ Hidden by default (minimal UI, appears on Super+V)
+
+How to Use:
+-----------
+1. Press Super+V anytime to open clipboard history
+2. Select any item (text or image) to paste it
+3. Images show as preview thumbnails
+4. Full search and history available
+
+Configuration Files:
+- /home/sam/.config/copyq/copyq.conf
+- /home/sam/.config/autostart/copyq.desktop
+- /home/sam/.config/kglobalshortcutsrc (shortcut binding)
+
+Clipse has been completely replaced. Old config backed up in:
+- /home/sam/.config/clipse.backup/
+
+The UI is exactly what you're used to - minimal and clean, opening with Super+V!

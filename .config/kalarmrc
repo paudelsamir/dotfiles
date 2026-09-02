@@ -1,0 +1,27 @@
+[EditDialog]
+Height 1080=791
+Width 1920=567
+
+[General]
+AutoStart=true
+Backend=FileResources
+RunMode=Auto
+Version=3.13.1
+
+[Notification Messages]
+ConfirmAlarmDeletion=true
+EditEnableAlarms=true
+EmailQueuedNotify=false
+QuitWarn=
+
+[PrefDialog]
+Height 1080=1040
+Width 1920=1912
+
+[ShowOpts]
+EditMore=true
+
+[View]
+DateNavigatorTop=true
+ShowDateNavigator=false
+ShowResources=false

@@ -1,0 +1,8 @@
+ls
+cd Github
+ls
+cd 2026
+ls
+pwd
+clear
+exit

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "permission": {
+    "bash": {
+      "niri *": "allow",
+      "sed *": "allow"
+    }
+  }
+}

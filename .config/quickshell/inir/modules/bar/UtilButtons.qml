@@ -334,26 +334,15 @@ Item {
             sourceComponent: CircleUtilButton {
                 Layout.alignment: Qt.AlignVCenter
                 onClicked: event => {
-                    if (PowerProfiles.hasPerformanceProfile) {
-                        switch(PowerProfiles.profile) {
-                            case PowerProfile.PowerSaver: PowerProfiles.profile = PowerProfile.Balanced
-                            break;
-                            case PowerProfile.Balanced: PowerProfiles.profile = PowerProfile.Performance
-                            break;
-                            case PowerProfile.Performance: PowerProfiles.profile = PowerProfile.PowerSaver
-                            break;
-                        }
-                    } else {
-                        PowerProfiles.profile = PowerProfiles.profile == PowerProfile.Balanced ? PowerProfile.PowerSaver : PowerProfile.Balanced
-                    }
+                    PowerProfilesCli.cycleProfile()
                 }
                 MaterialSymbol {
                     horizontalAlignment: Qt.AlignHCenter
                     fill: 0
-                    text: switch(PowerProfiles.profile) {
-                        case PowerProfile.PowerSaver: return "energy_savings_leaf"
-                        case PowerProfile.Balanced: return "settings_slow_motion"
-                        case PowerProfile.Performance: return "local_fire_department"
+                    text: switch(PowerProfilesCli.profile) {
+                        case 0: return "energy_savings_leaf"
+                        case 1: return "settings_slow_motion"
+                        case 2: return "local_fire_department"
                     }
                     iconSize: Appearance.font.pixelSize.large
                     color: Appearance.inirEverywhere ? Appearance.inir.colText : Appearance.colors.colOnLayer2

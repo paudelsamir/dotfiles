@@ -12,14 +12,14 @@
 // Round every window's corners and clip content to match.
 // Works best with prefer-no-csd (set in config.kdl).
 window-rule {
-    geometry-corner-radius 7
+    geometry-corner-radius 8
     clip-to-geometry true
 }
 
 // Dim unfocused windows slightly for visual hierarchy.
 window-rule {
     match is-active=false
-    opacity 0.80
+    opacity 0.45
 }
 
 // ── Per-app fixes ───────────────────────────────────────────────────────────
@@ -43,6 +43,15 @@ window-rule {
 window-rule {
     match app-id="steam" title=r#"^notificationtoasts_\d+_desktop$"#
     default-floating-position x=10 y=10 relative-to="bottom-right"
+}
+
+// ── Zen Browser: frosted-glass translucency ─────────────────────────────────
+// Lets the wallpaper show through the whole window (glass over the page too).
+// Combined with chrome/userChrome.css which makes the toolbar/tab/sidebar
+// translucent + internally blurred for the acrylic look.
+window-rule {
+    match app-id=r#"^zen$"#
+    opacity 0.94
 }
 
 // ── Privacy: block password managers from screen capture ────────────────────

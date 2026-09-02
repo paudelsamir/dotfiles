@@ -38,10 +38,6 @@ binds {
     // iNiR shell overlays & tools
     // ═══════════════════════════════════════════════════════════════════════
 
-    // Alt-Tab window switcher (iNiR's animated switcher).
-    Alt+Tab { spawn "/home/sam/.local/bin/inir" "altSwitcher" "next"; }
-    Alt+Shift+Tab { spawn "/home/sam/.local/bin/inir" "altSwitcher" "previous"; }
-
     // Crosshair overlay toggle.
     Super+G { spawn "/home/sam/.local/bin/inir" "overlay" "toggle"; }
 
@@ -52,14 +48,14 @@ binds {
     Mod+V { spawn "/home/sam/.local/bin/inir" "clipboard" "toggle"; }
 
     // Lock screen.
-    Mod+Alt+L allow-when-locked=true { spawn "/home/sam/.local/bin/inir" "lock" "activate"; }
+    Mod+Alt+L allow-when-locked=true { spawn "swaylock"; }
     // Re-focus the lock surface (workaround when input feels dead after suspend/resume).
-    Mod+Ctrl+Shift+L allow-when-locked=true { spawn "/home/sam/.local/bin/inir" "lock" "focus"; }
+    Mod+Ctrl+Shift+L allow-when-locked=true { spawn "swaylock"; }
 
-    // Region selector: screenshot / OCR / Google Lens search.
+    // Region selector: screenshot / OCR / Google Lens search / unified snip menu.
     Mod+Shift+S { spawn "/home/sam/.local/bin/inir" "region" "screenshot"; }
-    Mod+Shift+X { spawn "/home/sam/.local/bin/inir" "region" "ocr"; }
-    Mod+Shift+A { spawn "/home/sam/.local/bin/inir" "region" "search"; }
+    Mod+Shift+X { spawn "bash" "-c" "grim -g \"$(slurp)\" - | tesseract stdin stdout 2>/dev/null | wl-copy"; }
+    Ctrl+Shift+S { spawn "flameshot" "gui"; }
 
     // Wallpaper picker, settings, cheatsheet, panel family switch.
     Ctrl+Alt+T { spawn "/home/sam/.local/bin/inir" "wallpaperSelector" "toggle"; }
@@ -78,6 +74,12 @@ binds {
     Mod+Return { spawn "/home/sam/.local/bin/inir" "terminal"; }
     Super+E { spawn "dolphin"; }
     Super+W { spawn "brave"; }
+
+    // Pear Desktop toggle (launch / show / hide).
+    Super+P { spawn "/home/sam/.local/bin/pear-toggle"; }
+
+    // Task manager (Windows-style Ctrl+Shift+Esc).
+    Ctrl+Shift+Escape { spawn "gnome-system-monitor"; }
 
     // ═══════════════════════════════════════════════════════════════════════
     // Window management
@@ -98,6 +100,12 @@ binds {
     // Toggle floating / tiling.
     Mod+A { toggle-window-floating; }
 
+    // Toggle opacity (dim-on-inactive) exemption for the focused window.
+    // Uses a script to target by window ID (works even while window is focused).
+    // Press on your World Cup stream → it won't dim when you switch away.
+    // Press again to re-enable dimming for that window.
+    Mod+O { spawn "bash" "-c" "~/.config/niri/scripts/toggle-opacity-exemption.sh"; }
+
     // Switch focus between tiling and floating layers.
     Mod+Shift+V { switch-focus-between-floating-and-tiling; }
 
@@ -106,7 +114,7 @@ binds {
     // ═══════════════════════════════════════════════════════════════════════
 
     // Cycle through preset column widths (1/3 → 1/2 → 2/3, set in layout).
-    Mod+R { switch-preset-column-width; }
+    Mod+R { spawn "/home/sam/.local/bin/niri-reload"; }
 
     // Screen recording — region select with audio.
     Mod+Shift+R { spawn "/home/sam/.local/bin/inir" "region" "recordWithSound"; }
@@ -126,8 +134,8 @@ binds {
     // Fine-grained width/height adjustment (±10% of screen).
     Mod+Minus { set-column-width "-10%"; }
     Mod+Equal { set-column-width "+10%"; }
-    Mod+Semicolon { set-column-width "-10%"; }
-    Mod+Apostrophe { set-column-width "+10%"; }
+    Mod+Semicolon { switch-preset-column-width-back; }
+    Mod+Apostrophe { switch-preset-column-width; }
     Mod+Shift+Minus { set-window-height "-10%"; }
     Mod+Shift+Equal { set-window-height "+10%"; }
 
@@ -234,8 +242,6 @@ binds {
     Alt+0 { move-column-to-workspace 10; }
 
     // Navigate workspaces sequentially (useful with dynamic workspaces).
-    Alt+Left { focus-workspace-up; }
-    Alt+Right { focus-workspace-down; }
     Mod+Page_Down { focus-workspace-down; }
     Mod+Page_Up   { focus-workspace-up; }
     Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
@@ -269,28 +275,28 @@ binds {
     // Hardware keys → iNiR IPC (with OSD feedback)
     // ═══════════════════════════════════════════════════════════════════════
 
-    // Volume (routed through iNiR for OSD + EasyEffects-aware sink resolution).
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "/home/sam/.local/bin/inir" "audio" "volumeUp"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "/home/sam/.local/bin/inir" "audio" "volumeDown"; }
-    XF86AudioMute        allow-when-locked=true { spawn "/home/sam/.local/bin/inir" "audio" "mute"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn "/home/sam/.local/bin/inir" "audio" "micMute"; }
+    // Volume.
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+    XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
 
     // Brightness.
-    XF86MonBrightnessUp   allow-when-locked=true { spawn "/home/sam/.local/bin/inir" "brightness" "increment"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "/home/sam/.local/bin/inir" "brightness" "decrement"; }
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "brightnessctl" "s" "+10%"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "s" "10%-"; }
 
-    // Media playback (MPRIS — works with any player: Spotify, Firefox, mpv…).
-    XF86AudioPlay  { spawn "/home/sam/.local/bin/inir" "mpris" "playPause"; }
-    XF86AudioPause { spawn "/home/sam/.local/bin/inir" "mpris" "playPause"; }
-    XF86AudioNext  { spawn "/home/sam/.local/bin/inir" "mpris" "next"; }
-    XF86AudioPrev  { spawn "/home/sam/.local/bin/inir" "mpris" "previous"; }
+    // Media playback (MPRIS).
+    XF86AudioPlay  { spawn "playerctl" "play-pause"; }
+    XF86AudioPause { spawn "playerctl" "pause"; }
+    XF86AudioNext  { spawn "playerctl" "next"; }
+    XF86AudioPrev  { spawn "playerctl" "previous"; }
 
-    // Keyboard shortcuts for media (when no media keys are available).
-    Ctrl+Mod+Space { spawn "/home/sam/.local/bin/inir" "mpris" "playPause"; }
-    Mod+Alt+N      { spawn "/home/sam/.local/bin/inir" "mpris" "next"; }
-    Mod+Alt+P      { spawn "/home/sam/.local/bin/inir" "mpris" "previous"; }
-    Mod+Shift+M    { spawn "/home/sam/.local/bin/inir" "audio" "mute"; }
-    Mod+Shift+P    { spawn "/home/sam/.local/bin/inir" "mpris" "playPause"; }
-    Mod+Shift+N    { spawn "/home/sam/.local/bin/inir" "mpris" "next"; }
-    Mod+Shift+B    { spawn "/home/sam/.local/bin/inir" "mpris" "previous"; }
+    // Keyboard shortcuts for media.
+    Ctrl+Mod+Space { spawn "playerctl" "play-pause"; }
+    Mod+Alt+N      { spawn "playerctl" "next"; }
+    Mod+Alt+P      { spawn "playerctl" "previous"; }
+    Mod+Shift+M    { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    Mod+Shift+P    { spawn "playerctl" "play-pause"; }
+    Mod+Shift+N    { spawn "playerctl" "next"; }
+    Mod+Shift+B    { spawn "playerctl" "previous"; }
 }

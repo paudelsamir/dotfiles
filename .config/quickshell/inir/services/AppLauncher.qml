@@ -225,6 +225,24 @@ Singleton {
     }
 
     function launchNetworkSettings(useEthernet: bool): void {
-        root.launch(useEthernet ? "networkEthernet" : "network")
+        const slot = useEthernet ? "networkEthernet" : "network"
+        const command = root.commandFor(slot)
+        // The configured tool may simply not be installed (default is
+        // nm-connection-editor); a silently failed exec looks like a dead
+        // Details button. Probe and fall back through known tools.
+        const fallbacks = [
+            "nm-connection-editor",
+            "kcmshell6 kcm_networkmanagement",
+            "gnome-control-center network",
+            "kitty -1 fish -c nmtui",
+            "foot -e nmtui"
+        ]
+        const chain = [command].concat(fallbacks.filter(c => c.split(" ")[0] !== command.split(" ")[0]))
+        // No brace grouping: the string runs under fish when available.
+        const sh = chain
+            .filter(c => c.length > 0)
+            .map(c => `command -v ${c.split(" ")[0]} >/dev/null 2>&1 && exec ${c}`)
+            .join(" || ")
+        ShellExec.execCmd(sh)
     }
 }

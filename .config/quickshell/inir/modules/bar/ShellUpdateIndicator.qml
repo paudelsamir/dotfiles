@@ -180,7 +180,7 @@ MouseArea {
 
                     StyledText {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: ShellUpdates.isUpdating ? Translation.tr("Updating...") : Translation.tr("Update")
+                        text: ShellUpdates.isUpdating ? Translation.tr("Updating...") : Translation.tr("iNiR Update")
                         font {
                             weight: Font.Medium
                             pixelSize: Appearance.font.pixelSize.normal

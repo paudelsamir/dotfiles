@@ -1,0 +1,389 @@
+13:56:42.342: Platform: Wayland
+13:56:42.342: CPU Name: AMD Ryzen 7 6800H with Radeon Graphics
+13:56:42.342: CPU Speed: 3309.891MHz
+13:56:42.342: Physical Cores: 8, Logical Cores: 16
+13:56:42.342: Physical Memory: 15218MB Total, 10397MB Free
+13:56:42.342: Kernel Version: Linux 7.1.3-arch1-3
+13:56:42.342: Distribution: "Arch Linux" Unknown
+13:56:42.342: Desktop Environment: niri (niri)
+13:56:42.342: Session Type: wayland
+13:56:42.343: Current Date/Time: 2026-08-20, 01:56:42 PM
+13:56:42.343: Browser Hardware Acceleration: true
+13:56:42.343: Qt Version: 6.11.1 (runtime), 6.11.1 (compiled)
+13:56:42.343: Portable mode: false
+13:56:42.382: OBS 32.1.2 (linux)
+13:56:42.382: ---------------------------------
+13:56:42.388: ---------------------------------
+13:56:42.388: audio settings reset:
+13:56:42.388: 	samples per sec: 48000
+13:56:42.388: 	speakers:        2
+13:56:42.388: 	max buffering:   960 milliseconds
+13:56:42.388: 	buffering type:  dynamically increasing
+13:56:42.390: ---------------------------------
+13:56:42.390: Initializing OpenGL...
+13:56:42.390: Using EGL/Wayland
+13:56:42.435: Initialized EGL 1.5
+13:56:42.446: Loading up OpenGL on adapter AMD AMD Radeon 680M (radeonsi, rembrandt, ACO, DRM 3.64, 7.1.3-arch1-3)
+13:56:42.446: OpenGL loaded successfully, version 4.6 (Core Profile) Mesa 26.1.4-arch1.1, shading language 4.60
+13:56:42.476: ---------------------------------
+13:56:42.476: video settings reset:
+13:56:42.476: 	base resolution:   1920x1080
+13:56:42.476: 	output resolution: 1280x720
+13:56:42.476: 	downscale filter:  Bicubic
+13:56:42.476: 	fps:               30/1
+13:56:42.476: 	format:            NV12
+13:56:42.476: 	YUV mode:          Rec. 709/Partial
+13:56:42.476: NV12 texture support enabled
+13:56:42.476: P010 texture support not available
+13:56:42.479: Audio monitoring device:
+13:56:42.479: 	name: Default
+13:56:42.479: 	id: default
+13:56:42.481: ---------------------------------
+13:56:42.482: Failed to load 'en-US' text for module: 'decklink-captions.so'
+13:56:42.484: Failed to load 'en-US' text for module: 'decklink-output-ui.so'
+13:56:42.485: A DeckLink iterator could not be created.  The DeckLink drivers may not be installed
+13:56:42.485: Failed to initialize module 'decklink.so'
+13:56:42.587: [pipewire] Available capture sources:
+13:56:42.587: [pipewire]     - Monitor source
+13:56:42.587: [pipewire]     - Window source
+13:56:42.594: v4l2loopback not installed, virtual camera not registered
+13:56:42.861: VAAPI: API version 1.24
+13:56:42.921: FFmpeg VAAPI H264 encoding supported
+13:56:43.179: FFmpeg VAAPI AV1 encoding not supported
+13:56:43.428: FFmpeg VAAPI HEVC encoding supported
+13:56:43.667: [obs-nvenc] NVENC version: 13.0 (compiled) / 13.1 (driver), CUDA driver version: 13.30, AV1 supported: false
+13:56:44.219: [obs-websocket] [obs_module_load] you can haz websockets (Version: 5.7.3 | RPC Version: 1)
+13:56:44.219: [obs-websocket] [obs_module_load] Qt version (compile-time): 6.11.1 | Qt version (run-time): 6.11.1
+13:56:44.219: [obs-websocket] [obs_module_load] Linked ASIO Version: 103800
+13:56:44.223: [obs-websocket] [obs_module_load] Module loaded.
+13:56:44.228: ---------------------------------
+13:56:44.228:   Loaded Modules:
+13:56:44.228:     text-freetype2.so
+13:56:44.228:     rtmp-services.so
+13:56:44.228:     obs-x264.so
+13:56:44.228:     obs-websocket.so
+13:56:44.228:     obs-webrtc.so
+13:56:44.228:     obs-vst.so
+13:56:44.228:     obs-transitions.so
+13:56:44.228:     obs-qsv11.so
+13:56:44.228:     obs-outputs.so
+13:56:44.228:     obs-nvenc.so
+13:56:44.228:     obs-libfdk.so
+13:56:44.228:     obs-filters.so
+13:56:44.228:     obs-ffmpeg.so
+13:56:44.228:     linux-v4l2.so
+13:56:44.228:     linux-pulseaudio.so
+13:56:44.228:     linux-pipewire.so
+13:56:44.228:     linux-jack.so
+13:56:44.228:     linux-capture.so
+13:56:44.228:     linux-alsa.so
+13:56:44.228:     image-source.so
+13:56:44.228:     frontend-tools.so
+13:56:44.228:     decklink-output-ui.so
+13:56:44.228:     decklink-captions.so
+13:56:44.228: ---------------------------------
+13:56:44.228: ---------------------------------
+13:56:44.228: Available Encoders:
+13:56:44.228:   Video Encoders:
+13:56:44.228: 	- ffmpeg_svt_av1 (SVT-AV1)
+13:56:44.228: 	- ffmpeg_aom_av1 (AOM AV1)
+13:56:44.228: 	- ffmpeg_vaapi_tex (FFmpeg VAAPI H.264)
+13:56:44.228: 	- hevc_ffmpeg_vaapi_tex (FFmpeg VAAPI HEVC)
+13:56:44.228: 	- obs_nvenc_h264_tex (NVIDIA NVENC H.264)
+13:56:44.228: 	- obs_nvenc_hevc_tex (NVIDIA NVENC HEVC)
+13:56:44.228: 	- obs_x264 (x264)
+13:56:44.228:   Audio Encoders:
+13:56:44.228: 	- ffmpeg_aac (FFmpeg AAC)
+13:56:44.228: 	- ffmpeg_opus (FFmpeg Opus)
+13:56:44.228: 	- ffmpeg_pcm_s16le (FFmpeg PCM (16-bit))
+13:56:44.228: 	- ffmpeg_pcm_s24le (FFmpeg PCM (24-bit))
+13:56:44.228: 	- ffmpeg_pcm_f32le (FFmpeg PCM (32-bit float))
+13:56:44.228: 	- ffmpeg_alac (FFmpeg ALAC (24-bit))
+13:56:44.228: 	- ffmpeg_flac (FFmpeg FLAC (16-bit))
+13:56:44.229: 	- libfdk_aac (libfdk AAC)
+13:56:44.229: ==== Startup complete ===============================================
+13:56:44.266: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Connection already associated with an application ID")
+13:56:44.266: All scene data cleared
+13:56:44.266: ------------------------------------------------
+13:56:44.270: Device for 'Audio Output Capture' source Desktop Audio is also used for audio monitoring.
+13:56:44.270: Deduplication logic is being applied to all monitored sources.
+13:56:44.270: pulse-input: Server name: 'PulseAudio (on PipeWire 1.6.8) 15.0.0'
+13:56:44.270: pulse-input: Audio format: s24le, 48000 Hz, 2 channels
+13:56:44.270: pulse-input: Sample format s24le not supported by OBS,using float32le instead for recording
+13:56:44.270: pulse-input: Started recording from 'alsa_output.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo.monitor'
+13:56:44.270: [Loaded global audio device]: 'Desktop Audio'
+13:56:44.273: Device for 'Audio Output Capture' source Desktop Audio 2 is also used for audio monitoring.
+13:56:44.273: Deduplication logic is being applied to all monitored sources.
+13:56:44.273: pulse-input: Server name: 'PulseAudio (on PipeWire 1.6.8) 15.0.0'
+13:56:44.273: pulse-input: Audio format: s24le, 48000 Hz, 2 channels
+13:56:44.273: pulse-input: Sample format s24le not supported by OBS,using float32le instead for recording
+13:56:44.273: pulse-input: Started recording from 'alsa_output.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo.monitor'
+13:56:44.273: [Loaded global audio device]: 'Desktop Audio 2'
+13:56:44.273: pulse-input: Server name: 'PulseAudio (on PipeWire 1.6.8) 15.0.0'
+13:56:44.273: pulse-input: Audio format: s16le, 48000 Hz, 2 channels
+13:56:44.273: pulse-input: Started recording from 'alsa_input.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo'
+13:56:44.274: [Loaded global audio device]: 'Mic/Aux'
+13:56:44.274: pulse-input: Server name: 'PulseAudio (on PipeWire 1.6.8) 15.0.0'
+13:56:44.274: pulse-input: Audio format: s16le, 48000 Hz, 2 channels
+13:56:44.274: pulse-input: Started recording from 'alsa_input.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo'
+13:56:44.274: [Loaded global audio device]: 'Mic/Aux 2'
+13:56:44.275: PipeWire initialized
+13:56:44.275: pulse-input: Server name: 'PulseAudio (on PipeWire 1.6.8) 15.0.0'
+13:56:44.275: pulse-input: Audio format: s16le, 48000 Hz, 2 channels
+13:56:44.276: pulse-input: Started recording from 'alsa_input.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo'
+13:56:44.276: [Media Source '2026-08-18 14-49-15.mp4']: settings:
+13:56:44.276: 	input:                   /home/sam/journaling/2026-08-18 14-49-15.mp4
+13:56:44.276: 	input_format:            (null)
+13:56:44.276: 	speed:                   100
+13:56:44.276: 	is_looping:              no
+13:56:44.276: 	is_linear_alpha:         no
+13:56:44.276: 	is_hw_decoding:          no
+13:56:44.276: 	is_clear_on_media_end:   yes
+13:56:44.276: 	restart_on_activate:     yes
+13:56:44.276: 	close_when_inactive:     no
+13:56:44.276: 	full_decode:             no
+13:56:44.276: 	ffmpeg_options:          
+13:56:44.276: [Media Source '2026-02-04 21-52-00.mp4']: settings:
+13:56:44.276: 	input:                   /home/sam/journaling/2026-02-04 21-52-00.mp4
+13:56:44.276: 	input_format:            (null)
+13:56:44.276: 	speed:                   100
+13:56:44.276: 	is_looping:              no
+13:56:44.276: 	is_linear_alpha:         no
+13:56:44.276: 	is_hw_decoding:          no
+13:56:44.276: 	is_clear_on_media_end:   yes
+13:56:44.276: 	restart_on_activate:     yes
+13:56:44.276: 	close_when_inactive:     no
+13:56:44.276: 	full_decode:             no
+13:56:44.276: 	ffmpeg_options:          
+13:56:44.276: [Media Source '2026-08-18 14-49-15.mp4 (2)']: settings:
+13:56:44.276: 	input:                   /home/sam/journaling/2026-08-18 14-49-15.mp4
+13:56:44.276: 	input_format:            (null)
+13:56:44.276: 	speed:                   100
+13:56:44.276: 	is_looping:              no
+13:56:44.276: 	is_linear_alpha:         no
+13:56:44.276: 	is_hw_decoding:          no
+13:56:44.276: 	is_clear_on_media_end:   yes
+13:56:44.276: 	restart_on_activate:     yes
+13:56:44.276: 	close_when_inactive:     no
+13:56:44.276: 	full_decode:             no
+13:56:44.276: 	ffmpeg_options:          
+13:56:44.277: Switched to scene 'Stream'
+13:56:44.277: ------------------------------------------------
+13:56:44.277: Loaded scenes:
+13:56:44.277: - scene 'whats up?':
+13:56:44.277:     - source: 'Video Capture Device (PipeWire) (BETA)' (pipewire-camera-source)
+13:56:44.277:     - source: 'Date text' (text_ft2_source_v2)
+13:56:44.277: - scene 'Stream':
+13:56:44.277:     - source: 'Kick' (pipewire-screen-capture-source)
+13:56:44.277:     - source: 'webcam' (pipewire-camera-source)
+13:56:44.277:     - source: 'Audio Input Capture (PulseAudio)' (pulse_input_capture)
+13:56:44.277:     - source: '2026-08-18 14-49-15.mp4' (ffmpeg_source)
+13:56:44.277:     - source: '2026-02-04 21-52-00.mp4' (ffmpeg_source)
+13:56:44.277:     - source: '2026-08-18 14-49-15.mp4 (2)' (ffmpeg_source)
+13:56:44.277: ------------------------------------------------
+13:56:44.305: Device for 'Audio Output Capture' source Desktop Audio is also used for audio monitoring.
+13:56:44.305: Deduplication logic is being applied to all monitored sources.
+13:56:44.308: Device for 'Audio Output Capture' source Desktop Audio 2 is also used for audio monitoring.
+13:56:44.308: Deduplication logic is being applied to all monitored sources.
+13:56:44.388: [camera-portal] Successfully accessed cameras
+13:56:44.388: [pipewire] Screencast session created
+13:56:44.788: [pipewire] Asking for monitor and window
+13:56:44.791: [pipewire] Server version: 1.6.8
+13:56:44.791: [pipewire] Library version: 1.6.8
+13:56:44.791: [pipewire] Header version: 1.6.7
+13:56:44.791: [pipewire] Created registry 0x55d386f47e60
+13:56:44.791: [camera-portal] Found device Dummy-Driver
+13:56:44.791: [camera-portal] Found device Freewheel-Driver
+13:56:44.791: [camera-portal] Found device Midi-Bridge
+13:56:44.791: [camera-portal] Found device v4l2_input.pci-0000_05_00.3-usb-0_4_1.0
+13:56:44.791: [camera-portal] streaming camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:56:44.791: [pipewire] Created stream 0x55d38882cf70
+13:56:44.792: [pipewire] Stream 0x55d38882cf70 state: "connecting" (error: none)
+13:56:44.792: [pipewire] Playing stream 0x55d38882cf70
+13:56:44.792: [camera-portal] streaming camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:56:44.792: [pipewire] Created stream 0x55d388849550
+13:56:44.792: [pipewire] Stream 0x55d388849550 state: "connecting" (error: none)
+13:56:44.793: [pipewire] Playing stream 0x55d388849550
+13:56:44.793: [camera-portal] Found device bluez_midi.server
+13:56:44.793: [camera-portal] Found device alsa_output.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo
+13:56:44.793: [camera-portal] Found device alsa_input.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo
+13:56:44.793: [camera-portal] Found device OBS
+13:56:44.793: [camera-portal] Found device OBS
+13:56:44.793: [camera-portal] Found device OBS
+13:56:44.793: [camera-portal] Found device OBS
+13:56:44.793: [camera-portal] Found device OBS
+13:56:44.793: [pipewire] Stream 0x55d38882cf70 state: "paused" (error: none)
+13:56:44.793: [camera-portal] Found device obs
+13:56:44.793: [pipewire] Stream 0x55d388849550 state: "paused" (error: none)
+13:56:44.794: [camera-portal] Found device obs
+13:56:44.812: [pipewire] Negotiated format:
+13:56:44.812: [pipewire]     Format: 4 (Spa:Enum:VideoFormat:YUY2)
+13:56:44.812: [pipewire]     Size: 1280x720
+13:56:44.812: [pipewire]     Framerate: 10/1
+13:56:44.814: [pipewire] Negotiated format:
+13:56:44.814: [pipewire]     Format: 4 (Spa:Enum:VideoFormat:YUY2)
+13:56:44.814: [pipewire]     Size: 1280x720
+13:56:44.814: [pipewire]     Framerate: 10/1
+13:56:44.814: [pipewire] Stream 0x55d38882cf70 state: "streaming" (error: none)
+13:56:44.818: [pipewire] Stream 0x55d388849550 state: "streaming" (error: none)
+13:56:44.842: adding 21 milliseconds of audio buffering, total audio buffering is now 21 milliseconds (source: Desktop Audio)
+13:56:44.842: 
+13:56:45.162: adding 64 milliseconds of audio buffering, total audio buffering is now 85 milliseconds (source: Desktop Audio 2)
+13:56:45.162: 
+13:56:46.743: [pipewire] Failed to start screencast, denied or cancelled by user
+13:56:56.864: User Removed source '2026-08-18 14-49-15.mp4 (2)' (ffmpeg_source) from scene 'Stream'
+13:56:59.414: User Removed source '2026-02-04 21-52-00.mp4' (ffmpeg_source) from scene 'Stream'
+13:57:02.343: User Removed source '2026-08-18 14-49-15.mp4' (ffmpeg_source) from scene 'Stream'
+13:57:24.456: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:57:24.456: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:57:24.456: [camera-portal] Updating pixel formats
+13:57:24.456: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:46.704: [camera-portal] Found device pw-play
+13:58:46.704: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:46.704: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:46.704: [camera-portal] Updating pixel formats
+13:58:46.705: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:46.974: [pipewire-camera] Removed device pw-play
+13:58:46.974: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:46.974: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:46.974: [camera-portal] Updating pixel formats
+13:58:46.974: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.004: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.005: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.005: [camera-portal] Updating pixel formats
+13:58:47.005: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.033: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.033: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.033: [camera-portal] Updating pixel formats
+13:58:47.034: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.062: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.062: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.062: [camera-portal] Updating pixel formats
+13:58:47.062: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.090: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.090: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.090: [camera-portal] Updating pixel formats
+13:58:47.090: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.118: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.119: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:58:47.119: [camera-portal] Updating pixel formats
+13:58:47.119: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.651: [camera-portal] Found device pw-play
+13:59:16.651: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.651: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.651: [camera-portal] Updating pixel formats
+13:59:16.651: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.903: [pipewire-camera] Removed device pw-play
+13:59:16.903: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.903: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.903: [camera-portal] Updating pixel formats
+13:59:16.903: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.912: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.912: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.912: [camera-portal] Updating pixel formats
+13:59:16.912: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.921: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.921: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.921: [camera-portal] Updating pixel formats
+13:59:16.921: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.929: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.929: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.929: [camera-portal] Updating pixel formats
+13:59:16.929: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.937: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.937: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.937: [camera-portal] Updating pixel formats
+13:59:16.937: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.946: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.946: [camera-portal] selected camera 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:16.946: [camera-portal] Updating pixel formats
+13:59:16.946: [camera-portal] Selected format for 'v4l2_input.pci-0000_05_00.3-usb-0_4_1.0'
+13:59:37.046: [camera-portal] Updating device v4l2_input.pci-0000_05_00.3-usb-0_4_1.0
+13:59:55.048: ==== Shutting down ==================================================
+13:59:55.051: pulse-input: Stopped recording from 'alsa_output.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo.monitor'
+13:59:55.051: pulse-input: Got 7631 packets with 9157200 frames
+13:59:55.051: pulse-input: Stopped recording from 'alsa_output.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo.monitor'
+13:59:55.051: pulse-input: Got 7627 packets with 9152400 frames
+13:59:55.051: Deduplication logic stopped.
+13:59:55.051: pulse-input: Stopped recording from 'alsa_input.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo'
+13:59:55.051: pulse-input: Got 7627 packets with 9152400 frames
+13:59:55.051: pulse-input: Stopped recording from 'alsa_input.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo'
+13:59:55.051: pulse-input: Got 7627 packets with 9152400 frames
+13:59:55.051: [pipewire] Stream 0x55d38882cf70 state: "paused" (error: none)
+13:59:55.051: [pipewire] Stream 0x55d38882cf70 state: "unconnected" (error: none)
+13:59:55.055: pulse-input: Stopped recording from 'alsa_input.usb-ASUSTeK_COMPUTER_INC._C-Media_R__Audio-00.analog-stereo'
+13:59:55.055: pulse-input: Got 6502 packets with 7802400 frames
+13:59:55.056: [pipewire-camera] Removed device OBS
+13:59:55.099: Not all sources were cleared when clearing scene data:
+13:59:55.099: 
+13:59:55.099: - webcam
+13:59:55.099: 
+13:59:55.102: [pipewire] Stream 0x55d388849550 state: "paused" (error: none)
+13:59:55.103: [pipewire] Stream 0x55d388849550 state: "unconnected" (error: none)
+13:59:55.106: Tried to call obs_frontend_remove_event_callback with no callbacks!
+13:59:55.157: [obs-websocket] [obs_module_unload] Shutting down...
+13:59:55.158: Tried to call obs_frontend_remove_event_callback with no callbacks!
+13:59:55.158: [obs-websocket] [obs_module_unload] Finished shutting down.
+13:59:55.164: [Scripting] Total detached callbacks: 0
+13:59:55.164: Freeing OBS context data
+13:59:55.176: == Profiler Results =============================
+13:59:55.176: run_program_init: 2119.71 ms
+13:59:55.176:  ┣OBSApp::AppInit: 19.851 ms
+13:59:55.176:  ┃ ┗OBSApp::InitLocale: 1.742 ms
+13:59:55.176:  ┗OBSApp::OBSInit: 2038.61 ms
+13:59:55.176:    ┣obs_startup: 1.687 ms
+13:59:55.176:    ┗OBSBasic::OBSInit: 1993.01 ms
+13:59:55.176:      ┣OBSBasic::InitBasicConfig: 0.682 ms
+13:59:55.176:      ┣OBSBasic::ResetAudio: 0.254 ms
+13:59:55.176:      ┣OBSBasic::ResetVideo: 90.815 ms
+13:59:55.176:      ┃ ┗obs_init_graphics: 88.072 ms
+13:59:55.176:      ┃   ┗shader compilation: 29.245 ms
+13:59:55.176:      ┣OBSBasic::InitOBSCallbacks: 0.002 ms
+13:59:55.176:      ┣OBSBasic::InitHotkeys: 0.023 ms
+13:59:55.176:      ┣obs_load_all_modules2: 1747.1 ms
+13:59:55.176:      ┃ ┣obs_init_module(decklink-captions.so): 0 ms
+13:59:55.176:      ┃ ┣obs_init_module(decklink-output-ui.so): 0 ms
+13:59:55.176:      ┃ ┣obs_init_module(decklink.so): 0.082 ms
+13:59:55.176:      ┃ ┣obs_init_module(frontend-tools.so): 75.662 ms
+13:59:55.176:      ┃ ┣obs_init_module(image-source.so): 0.004 ms
+13:59:55.176:      ┃ ┣obs_init_module(linux-alsa.so): 0.001 ms
+13:59:55.176:      ┃ ┣obs_init_module(linux-capture.so): 0 ms
+13:59:55.176:      ┃ ┣obs_init_module(linux-jack.so): 0.001 ms
+13:59:55.176:      ┃ ┣obs_init_module(linux-pipewire.so): 10.131 ms
+13:59:55.176:      ┃ ┣obs_init_module(linux-pulseaudio.so): 0.001 ms
+13:59:55.176:      ┃ ┣obs_init_module(linux-v4l2.so): 3.397 ms
+13:59:55.176:      ┃ ┣obs_init_module(obs-ffmpeg.so): 822.687 ms
+13:59:55.176:      ┃ ┣obs_init_module(obs-filters.so): 0.022 ms
+13:59:55.176:      ┃ ┣obs_init_module(obs-libfdk.so): 0.001 ms
+13:59:55.176:      ┃ ┣obs_init_module(obs-nvenc.so): 169.906 ms
+13:59:55.176:      ┃ ┃ ┗nvenc_check: 169.899 ms
+13:59:55.176:      ┃ ┣obs_init_module(obs-outputs.so): 0.003 ms
+13:59:55.176:      ┃ ┣obs_init_module(obs-qsv11.so): 496.745 ms
+13:59:55.176:      ┃ ┣obs_init_module(obs-transitions.so): 0.004 ms
+13:59:55.176:      ┃ ┣obs_init_module(obs-vst.so): 0.001 ms
+13:59:55.176:      ┃ ┣obs_init_module(obs-webrtc.so): 0.003 ms
+13:59:55.176:      ┃ ┣obs_init_module(obs-websocket.so): 3.761 ms
+13:59:55.176:      ┃ ┣obs_init_module(obs-x264.so): 0.001 ms
+13:59:55.176:      ┃ ┣obs_init_module(rtmp-services.so): 1.318 ms
+13:59:55.176:      ┃ ┗obs_init_module(text-freetype2.so): 0.011 ms
+13:59:55.176:      ┣OBSBasic::InitService: 0.051 ms
+13:59:55.176:      ┣OBSBasic::ResetOutputs: 0.088 ms
+13:59:55.176:      ┣OBSBasic::CreateHotkeys: 0.018 ms
+13:59:55.176:      ┣OBSBasic::InitPrimitives: 0.051 ms
+13:59:55.176:      ┗OBSBasic::Load: 56.081 ms
+13:59:55.176: obs_hotkey_thread(25 ms): min=0 ms, median=0 ms, max=0.03 ms, 99th percentile=0.001 ms, 100% below 25 ms
+13:59:55.176: audio_thread(Audio): min=0.004 ms, median=0.068 ms, max=30.368 ms, 99th percentile=0.259 ms
+13:59:55.176: obs_graphics_thread(33.3333 ms): min=0.104 ms, median=0.969 ms, max=494.151 ms, 99th percentile=2.819 ms, 99.9131% below 33.333 ms
+13:59:55.176:  ┣tick_sources: min=0.001 ms, median=0.008 ms, max=372.405 ms, 99th percentile=1.224 ms
+13:59:55.176:  ┣output_frame: min=0.088 ms, median=0.45 ms, max=7.328 ms, 99th percentile=1.233 ms
+13:59:55.176:  ┃ ┗gs_context(video->graphics): min=0.088 ms, median=0.45 ms, max=7.326 ms, 99th percentile=1.231 ms
+13:59:55.176:  ┃   ┣render_video: min=0.007 ms, median=0.124 ms, max=7.112 ms, 99th percentile=0.939 ms
+13:59:55.176:  ┃   ┃ ┗render_main_texture: min=0.006 ms, median=0.118 ms, max=7.109 ms, 99th percentile=0.934 ms
+13:59:55.176:  ┃   ┗gs_flush: min=0.001 ms, median=0.003 ms, max=0.064 ms, 99th percentile=0.018 ms
+13:59:55.176:  ┗render_displays: min=0.003 ms, median=0.524 ms, max=41.794 ms, 99th percentile=1.636 ms
+13:59:55.176: =================================================
+13:59:55.176: == Profiler Time Between Calls ==================
+13:59:55.176: obs_hotkey_thread(25 ms): min=25.005 ms, median=25.03 ms, max=25.943 ms, 99.5453% within ±2% of 25 ms (0% lower, 0.454723% higher)
+13:59:55.176: obs_graphics_thread(33.3333 ms): min=4.103 ms, median=33.333 ms, max=494.159 ms, 99.7219% within ±2% of 33.333 ms (0.121655% lower, 0.156413% higher)
+13:59:55.176: =================================================
+13:59:55.183: Number of memory leaks: 0

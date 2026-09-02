@@ -12,11 +12,30 @@ Item {
 
     Settings {
         id: countdownSettings
-        property string targetDate: "2025-12-31"
+        property string targetDate: ""
         property string lastCheckedDate: ""
     }
 
     property string targetDate: countdownSettings.targetDate
+
+    property bool hasValidTarget: {
+        if (!targetDate || targetDate.length !== 10) return false
+        var parts = targetDate.split('-')
+        if (parts.length !== 3) return false
+        var year = parseInt(parts[0])
+        var month = parseInt(parts[1])
+        var day = parseInt(parts[2])
+        if (isNaN(year) || isNaN(month) || isNaN(day)) return false
+        if (month < 1 || month > 12) return false
+        if (day < 1 || day > 31) return false
+        var d = new Date(year, month - 1, day)
+        if (d.getMonth() !== month - 1 || d.getDate() !== day) return false
+        var today = new Date()
+        today.setHours(0,0,0,0)
+        return d.getTime() >= today.getTime()
+    }
+
+    visible: hasValidTarget
 
     property int daysLeft: {
         var today = new Date()
@@ -68,16 +87,6 @@ Item {
     implicitWidth: rowLayout.implicitWidth
     implicitHeight: Appearance.sizes.barHeight
 
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-
-        onPressed: {
-            GlobalStates.countdownPopupOpen = !GlobalStates.countdownPopupOpen;
-        }
-    }
-
     RowLayout {
         id: rowLayout
         anchors.centerIn: parent
@@ -96,9 +105,5 @@ Item {
             color: Appearance.colors.colOnSurfaceVariant
             text: root.daysLeft > 0 ? root.daysLeft + "d" : "0d"
         }
-    }
-
-    EventsHoverPopup {
-        hoverTarget: mouseArea
     }
 }

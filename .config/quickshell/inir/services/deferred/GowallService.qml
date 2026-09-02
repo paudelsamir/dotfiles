@@ -122,7 +122,7 @@ Singleton {
         const src = _norm(sourcePath)
         if (!_guardReady(src)) return
         const palette = _buildPalette(currentThemeColors)
-        if (palette.length === 0) { error = "Current theme palette is unavailable"; return }
+        if (palette.length === 0) { error = "Current iNiR theme palette is unavailable"; return }
         const json = JSON.stringify({ name: "inir-current", colors: palette }, null, 2)
         const fmt = _ext(format)
         _runOperation(["/usr/bin/gowall", "convert", src, "--theme", _customThemePath, "--output", _previewPathFor(fmt), "--format", fmt], fmt, json, true, _basenameWithoutExt(src))

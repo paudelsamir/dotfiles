@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=CopyQ
+Comment=Clipboard Manager with Image Support
+Exec=copyq
+Icon=copyq
+StartupNotify=false
+Terminal=false
+Categories=Utility;
+OnlyShowIn=KDE;
+Hidden=true

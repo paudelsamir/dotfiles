@@ -1,0 +1,56 @@
+# App data / browser profiles (caches, sessions, potential secrets)
+Code/
+Cursor/
+BraveSoftware/
+google-chrome/
+zen/
+Notion/
+obsidian/
+discord/
+vesktop/
+Vesktop/
+spotify/
+YouTube Music/
+suwayomi-chrome/
+heroic/
+unityhub/
+Antigravity/
+GitHub Desktop/
+nex/
+configstore/
+.wrangler/
+
+# Caches & build artifacts
+node_modules/
+gschemas.compiled
+*.log
+*.tmp
+*.lock
+Cache/
+GPUCache/
+Code Cache/
+blob_storage/
+
+# CopyQ clipboard history (copied secrets live here) + lock/temp junk
+copyq/copyq_tab_*.dat
+copyq/*.lock*
+copyq/copyq_geometry.ini.*
+copyq/copyq-monitor.ini.*
+
+# iNiR runtime/generated state & secrets
+iNiR/
+inir/config.json
+inir/yt-cookies.txt
+inir/installed_listfile
+inir/installed_true
+inir/version
+inir/version.json
+inir/migrations.json
+quickshell/illogical-impulse/
+
+# AUR/pacman cache
+yay/
+Downloads/
+
+# Large assets (kept in repo top-level)
+JetBrainsMono.zip*

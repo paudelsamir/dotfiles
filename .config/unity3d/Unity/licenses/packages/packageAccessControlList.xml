@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><root xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <PackageAccessControlList Expiration="2025-12-26T07:57:05.141Z" Id="Terms" Revision="47" Version="1.0">
+        <LicensedPackages>
+            <Package Id=""/>
+            <Package Id="com.unity.digital-twins.actor-system"/>
+            <Package Id="com.unity.digital-twins.annotation"/>
+            <Package Id="com.unity.digital-twins.common"/>
+            <Package Id="com.unity.digital-twins.data-streaming"/>
+            <Package Id="com.unity.digital-twins.deep-linking"/>
+            <Package Id="com.unity.digital-twins.identity"/>
+            <Package Id="com.unity.digital-twins.live.client"/>
+            <Package Id="com.unity.digital-twins.live.sdk"/>
+            <Package Id="com.unity.digital-twins.live.sdk.tools"/>
+            <Package Id="com.unity.digital-twins.live.ui"/>
+            <Package Id="com.unity.digital-twins.presence"/>
+            <Package Id="com.unity.digital-twins.storage"/>
+            <Package Id="com.unity.embedded.android-automotive"/>
+            <Package Id="com.unity.embedded.dbus"/>
+            <Package Id="com.unity.formats.axf"/>
+            <Package Id="com.unity.hmi.unity-hmi-template"/>
+            <Package Id="com.unity.industrial.forma"/>
+            <Package Id="com.unity.industrial.forma.configit.ace"/>
+            <Package Id="com.unity.industrial.forma.importers.csv"/>
+            <Package Id="com.unity.industrial.ict"/>
+            <Package Id="com.unity.industrial.ict.tools"/>
+            <Package Id="com.unity.industrial.product.aviera"/>
+            <Package Id="com.unity.industrial.renderstudio"/>
+            <Package Id="com.unity.industrial.renderstudio.pro"/>
+            <Package Id="com.unity.industrial.skybox"/>
+            <Package Id="com.unity.industrial.stages.ar"/>
+            <Package Id="com.unity.industrial.stages.basicwhite"/>
+            <Package Id="com.unity.industrial.stages.futuristicasia"/>
+            <Package Id="com.unity.industrial.stages.industrialshowroom"/>
+            <Package Id="com.unity.industrial.stages.luxuryshowroom"/>
+            <Package Id="com.unity.industrial.stages.photostudio"/>
+            <Package Id="com.unity.industrial.stages.saltlake"/>
+            <Package Id="com.unity.industrial.xtex"/>
+            <Package Id="com.unity.industry.toolkit"/>
+            <Package Id="com.unity.sensorsdk"/>
+            <Package Id="com.unity.systemgraph"/>
+        </LicensedPackages>
+    </PackageAccessControlList>
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+            <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"/>
+            <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+            <Reference URI="#Terms">
+                <Transforms>
+                    <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                <DigestValue>kbq1f6I6GpoTU+8a+Os6fw1Yxi0XAB7qWTJHbxyPHKg=</DigestValue>
+            </Reference>
+        </SignedInfo>
+        <SignatureValue>Grf7LhMkQ7cHEbZNK2xP340xpI4paAiLUnXIuXFAeCwDQKQtxlvT4JCji4QVDA/Bnqg4Sgm5N9Ru&#13;
++p1vmk99ZTl67C0bOhFaT6db4jCMJvPkFQahhLlHdqvtjwZ0HpmMvJRaWg0yQUb1L+ZG/8xM4nUj&#13;
+79yPjhNfM/Fa8HbyynhFpntM6jp0731Zr5ww0v4YjSsQEkfyUnPl6vU97pfGzzS4sPTo3drhjbUe&#13;
+yCMmjdnssXtYz5w+1Ni8QUmOXo9kIcMwyRC0s3IhceProtGnepjRXG1tGXN6yKECVIdDRlFq9krp&#13;
+Fd+AB/+M9wbNXarZiokRPI0s1c7yrivLigdqTQ==</SignatureValue>
+    </Signature>
+</root>

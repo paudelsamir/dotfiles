@@ -89,6 +89,7 @@ Singleton {
             property JsonObject ai: JsonObject {
                 property string model: "gemini-2.5-flash"
                 property real temperature: 0.5
+                property string promptName: ""
             }
 
             property JsonObject cheatsheet: JsonObject {
@@ -219,6 +220,31 @@ Singleton {
                     property int start: 0
                     property int duration: 60
                 }
+            }
+
+            // Settings workspace state is not user configuration. Keeping it
+            // here lets page delegates unload while navigation and active editor
+            // context survive page switches and standalone-window recreation.
+            property JsonObject settings: JsonObject {
+                property int iiPage: 0
+                property int wafflePage: 0
+                property int themeTab: 0
+                property string themeTag: ""
+                property string gowallFormat: "png"
+                property string gowallTheme: ""
+                property string gowallEffect: "grayscale"
+            }
+
+            // Desktop-widget editor workspace state. This is transient UI
+            // continuity, not user widget configuration: reopening the manager
+            // should restore the tool where the user left it without adding
+            // editor geometry to config.json.
+            property JsonObject desktopWidgets: JsonObject {
+                property real managerXRatio: 0.76
+                property real managerYRatio: 0.42
+                property int managerWidth: 420
+                property int managerHeight: 520
+                property string managerFilter: "all"
             }
 
             property JsonObject screenCast: JsonObject {

@@ -32,3 +32,8 @@ output "eDP-2" {
     mode "1920x1080@144.003"
     scale 1
 }
+
+// Toggle the iNiR Dashboard (welcome hub) — Settings → Shell → Dashboard.
+binds {
+    Mod+Shift+D { spawn "/home/sam/.local/bin/inir" "dashboard" "toggle"; }
+}

@@ -78,7 +78,7 @@ Quick start:
   inir restart           Restart the shell
   inir logs              View runtime logs (--full: all categories, --debug: foreground debug, -f: follow)
   inir status            Shell status info
-  inir doctor            Health checks
+  inir doctor            Health checks (--perf: runtime graphics/media snapshot)
 
 EOF
 
@@ -508,32 +508,32 @@ _inir_run_quickshell_rebuild() {
 
     # Precheck: don't waste 5 minutes rebuilding when nothing is wrong.
     if _inir_quickshell_abi_status; then
-        echo "shell: Quickshell/Qt ABI is already compatible — nothing to do." >&2
+        echo "iNiR: Quickshell/Qt ABI is already compatible — nothing to do." >&2
         if [[ -n "$_inir_abi_buildtime" ]]; then
             echo "      Build-time Qt: $_inir_abi_buildtime  ≡  Runtime Qt: $_inir_abi_runtime" >&2
         fi
         return 0
     fi
 
-    echo "shell: Qt/Quickshell ABI mismatch — $_inir_abi_msg" >&2
+    echo "iNiR: Qt/Quickshell ABI mismatch — $_inir_abi_msg" >&2
 
     local kind_pkg cmd
     kind_pkg="$(_inir_quickshell_install_kind)"
     cmd="$(_inir_quickshell_rebuild_cmd "$kind_pkg")"
     if [[ -z "$cmd" ]]; then
-        echo "shell: cannot auto-rebuild Quickshell — install kind '${kind_pkg%%:*}' has no automatic path." >&2
+        echo "iNiR: cannot auto-rebuild Quickshell — install kind '${kind_pkg%%:*}' has no automatic path." >&2
         echo "      See: https://quickshell.org/docs/master/guide/install-setup" >&2
         return 1
     fi
 
-    echo "shell: planned fix → ${cmd//--noconfirm/}" >&2
+    echo "iNiR: planned fix → ${cmd//--noconfirm/}" >&2
 
     if [[ "$mode" == "interactive" && -t 0 && -t 1 ]]; then
         local resp
         read -r -p "Run this fix now to rebuild quickshell? [Y/n] " resp || true
         case "${resp:-}" in
             ""|[Yy]*) ;;
-            *) echo "shell: rebuild declined." >&2; return 1 ;;
+            *) echo "iNiR: rebuild declined." >&2; return 1 ;;
         esac
         # Interactive: strip --noconfirm so the AUR helper shows full progress
         # and prompts naturally. The user already confirmed they want to proceed.
@@ -541,7 +541,7 @@ _inir_run_quickshell_rebuild() {
     fi
 
     echo "" >&2
-    echo "shell: rebuilding quickshell against the current Qt version..." >&2
+    echo "iNiR: rebuilding quickshell against the current Qt version..." >&2
     echo "      This compiles from source and may take 2-5 minutes." >&2
     echo "      (timeout: 15 minutes to avoid indefinite hangs)" >&2
     echo "" >&2
@@ -555,13 +555,13 @@ _inir_run_quickshell_rebuild() {
 
     if [[ "$rebuild_rc" -eq 124 ]]; then
         echo "" >&2
-        echo "shell: rebuild timed out after 15 minutes." >&2
+        echo "iNiR: rebuild timed out after 15 minutes." >&2
         echo "      The AUR helper may be waiting for input or the build is stuck." >&2
         echo "      Try manually: ${cmd//--noconfirm /}" >&2
         return 1
     elif [[ "$rebuild_rc" -ne 0 ]]; then
         echo "" >&2
-        echo "shell: rebuild failed (exit $rebuild_rc). Try manually:" >&2
+        echo "iNiR: rebuild failed (exit $rebuild_rc). Try manually:" >&2
         echo "      ${cmd//--noconfirm /}" >&2
         return 1
     fi
@@ -570,13 +570,13 @@ _inir_run_quickshell_rebuild() {
     rm -f "${XDG_CACHE_HOME:-$HOME/.cache}/inir/abi-check" 2>/dev/null
     if _inir_quickshell_abi_status; then
         echo "" >&2
-        echo "shell: Quickshell rebuilt successfully and ABI mismatch is resolved." >&2
+        echo "iNiR: Quickshell rebuilt successfully and ABI mismatch is resolved." >&2
         echo "      Run 'inir restart' to apply the new binary." >&2
         return 0
     fi
 
     echo "" >&2
-    echo "shell: rebuild finished but ABI mismatch persists — $_inir_abi_msg" >&2
+    echo "iNiR: rebuild finished but ABI mismatch persists — $_inir_abi_msg" >&2
     echo "      A stale local binary may be shadowing the system package." >&2
     local stale_qs
     if stale_qs="$(_inir_detect_stale_local_qs)" && [[ -n "$stale_qs" ]]; then
@@ -767,10 +767,101 @@ _inir_perf_detect_hybrid_runtime() {
     fi
 }
 
+_inir_perf_proc_env_entry() {
+    local pid="$1" key="$2"
+    [[ -r "/proc/$pid/environ" ]] || return 0
+    tr '\0' '\n' < "/proc/$pid/environ" 2>/dev/null | awk -v key="$key" '
+        index($0, key "=") == 1 { print; exit }
+    '
+}
+
+_inir_perf_observed_rhi() {
+    local pid="$1" maps="/proc/$pid/maps" threads has_vulkan=false has_opengl=false
+    threads="$(ps -T -p "$pid" -o comm= 2>/dev/null || true)"
+    if grep -q '^qs:vk' <<< "$threads"; then
+        printf 'vulkan (renderer thread)\n'
+        return
+    fi
+    if grep -q '^qs:gl' <<< "$threads"; then
+        printf 'opengl (renderer thread)\n'
+        return
+    fi
+    if [[ -r "$maps" ]]; then
+        grep -q '/libvulkan\.so' "$maps" 2>/dev/null && has_vulkan=true
+        grep -Eq '/lib(EGL|GLX)|/radeonsi_dri\.so' "$maps" 2>/dev/null && has_opengl=true
+    fi
+    if $has_vulkan && ! $has_opengl; then
+        printf 'vulkan (renderer library)\n'
+    elif $has_opengl && ! $has_vulkan; then
+        printf 'opengl (renderer library)\n'
+    elif $has_vulkan && $has_opengl; then
+        printf 'ambiguous (OpenGL and Vulkan libraries loaded)\n'
+    else
+        printf 'unknown\n'
+    fi
+}
+
+_inir_perf_drm_devices() {
+    local card card_name device_path render render_path render_name driver vendor device boot access
+    for card in /sys/class/drm/card[0-9]*; do
+        card_name="$(basename -- "$card")"
+        [[ "$card_name" =~ ^card[0-9]+$ ]] || continue
+        [[ -d "$card/device" ]] || continue
+        device_path="$(readlink -f "$card/device" 2>/dev/null || true)"
+        [[ -n "$device_path" ]] || continue
+        render_name="none"
+        for render in /sys/class/drm/renderD*; do
+            [[ -d "$render/device" ]] || continue
+            render_path="$(readlink -f "$render/device" 2>/dev/null || true)"
+            if [[ "$render_path" == "$device_path" ]]; then
+                render_name="$(basename -- "$render")"
+                break
+            fi
+        done
+        driver="$(basename -- "$(readlink -f "$card/device/driver" 2>/dev/null || printf unknown)")"
+        vendor="$(cat "$card/device/vendor" 2>/dev/null || printf unknown)"
+        device="$(cat "$card/device/device" 2>/dev/null || printf unknown)"
+        boot="$(cat "$card/device/boot_vga" 2>/dev/null || printf unknown)"
+        access="no"
+        [[ "$render_name" != none && -r "/dev/dri/$render_name" && -w "/dev/dri/$render_name" ]] && access="yes"
+        printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+            "$card_name" "$render_name" "$driver" "$vendor" "$device" "$boot" "$access"
+    done
+}
+
+_inir_perf_open_media() {
+    local pid="$1" fd target lower
+    declare -A counts=()
+    for fd in "/proc/$pid"/fd/*; do
+        [[ -e "$fd" ]] || continue
+        target="$(readlink "$fd" 2>/dev/null || true)"
+        [[ -n "$target" ]] || continue
+        target="${target% (deleted)}"
+        lower="${target,,}"
+        case "$lower" in
+            *.mp4|*.webm|*.mkv|*.avi|*.mov|*.gif|*.m4v|*.mpeg|*.mpg)
+                counts["$target"]=$(( ${counts["$target"]:-0} + 1 ))
+                ;;
+        esac
+    done
+    for target in "${!counts[@]}"; do
+        printf '%s\t%s\n' "${counts[$target]}" "$target"
+    done | sort -k2
+}
+
+_inir_perf_layer_names() {
+    local pid="$1" socket_entry socket
+    command -v niri >/dev/null 2>&1 || return 0
+    socket_entry="$(_inir_perf_proc_env_entry "$pid" NIRI_SOCKET)"
+    socket="${socket_entry#*=}"
+    [[ -n "$socket_entry" && -n "$socket" ]] || return 0
+    env NIRI_SOCKET="$socket" niri msg layers 2>/dev/null | awk -F'"' '/Namespace:/ { print $2 }'
+}
+
 # Print a runtime perf snapshot of the running shell. Used by support triage
 # when users report "shell uses too much RAM / CPU / heats up the laptop".
-# Prints process stats, top heap/file mappings, child processes, enabled
-# features, and heuristic recommendations.
+# Prints process stats, graphics/media ownership, top heap/file mappings,
+# child processes, enabled features, and heuristic recommendations.
 _inir_doctor_perf() {
     local pid=""
     if command -v "$qs_bin" >/dev/null 2>&1; then
@@ -791,13 +882,13 @@ _inir_doctor_perf() {
         ')"
     fi
     if [[ -z "$pid" ]] || ! [[ -d "/proc/$pid" ]]; then
-        echo "shell: no running shell found. Start it with 'inir' or 'inir restart' first." >&2
+        echo "iNiR: no running shell found. Start it with 'inir' or 'inir restart' first." >&2
         return 1
     fi
 
     local recommendations=()
 
-    printf '=== perf snapshot ===\n'
+    printf '=== iNiR perf snapshot ===\n'
     printf 'Date:       %s\n' "$(date '+%Y-%m-%d %H:%M:%S %Z')"
 
     resolve_config_dir 2>/dev/null || true
@@ -958,6 +1049,109 @@ _inir_doctor_perf() {
     printf '  GPU monitoring: %s\n' "$monitor_gpu"
     printf '\n'
 
+    printf '=== Graphics and media ===\n'
+    local rhi_entry rhi_request render_loop_entry render_loop qt_platform_entry qt_platform
+    local wayland_entry wayland_display ffmpeg_entry ffmpeg_policy ffmpeg_hwaccels
+    local qsg_threads ffmpeg_demuxers ffmpeg_video_renderers ffmpeg_audio_renderers decoder_workers
+    local libva_loaded="no" render_node_fds
+    rhi_entry="$(_inir_perf_proc_env_entry "$pid" QSG_RHI_BACKEND)"
+    rhi_request="${rhi_entry#*=}"
+    [[ -n "$rhi_entry" ]] || rhi_request="auto"
+    render_loop_entry="$(_inir_perf_proc_env_entry "$pid" QSG_RENDER_LOOP)"
+    render_loop="${render_loop_entry#*=}"
+    [[ -n "$render_loop_entry" ]] || render_loop="auto"
+    qt_platform_entry="$(_inir_perf_proc_env_entry "$pid" QT_QPA_PLATFORM)"
+    qt_platform="${qt_platform_entry#*=}"
+    [[ -n "$qt_platform_entry" ]] || qt_platform="auto"
+    wayland_entry="$(_inir_perf_proc_env_entry "$pid" WAYLAND_DISPLAY)"
+    wayland_display="${wayland_entry#*=}"
+    [[ -n "$wayland_entry" ]] || wayland_display="unset"
+    ffmpeg_entry="$(_inir_perf_proc_env_entry "$pid" QT_FFMPEG_DECODING_HW_DEVICE_TYPES)"
+    if [[ -z "$ffmpeg_entry" ]]; then
+        ffmpeg_policy="auto"
+    elif [[ -z "${ffmpeg_entry#*=}" ]]; then
+        ffmpeg_policy="disabled (empty backend list)"
+        recommendations+=("Qt FFmpeg hardware decoding is disabled by an empty QT_FFMPEG_DECODING_HW_DEVICE_TYPES value.")
+    else
+        ffmpeg_policy="${ffmpeg_entry#*=}"
+    fi
+
+    qsg_threads="$(ps -T -p "$pid" -o comm= 2>/dev/null | awk '$0 ~ /^QSGRenderThread/ {count++} END {print count+0}')"
+    ffmpeg_demuxers="$(ps -T -p "$pid" -o comm= 2>/dev/null | awk '$0 ~ /^QFFmpeg::Demuxe/ {count++} END {print count+0}')"
+    ffmpeg_video_renderers="$(ps -T -p "$pid" -o comm= 2>/dev/null | awk '$0 ~ /^QFFmpeg::VideoR/ {count++} END {print count+0}')"
+    ffmpeg_audio_renderers="$(ps -T -p "$pid" -o comm= 2>/dev/null | awk '$0 ~ /^QFFmpeg::AudioR/ {count++} END {print count+0}')"
+    decoder_workers="$(ps -T -p "$pid" -o comm= 2>/dev/null | awk '$0 ~ /^av:/ {count++} END {print count+0}')"
+    [[ -r "/proc/$pid/maps" ]] && grep -q '/libva[^/]*\.so' "/proc/$pid/maps" 2>/dev/null && libva_loaded="yes"
+    render_node_fds="$(for fd in "/proc/$pid"/fd/*; do
+        [[ -e "$fd" ]] || continue
+        readlink "$fd" 2>/dev/null || true
+    done | awk '$0 ~ /^\/dev\/dri\/renderD[0-9]+$/ {count++} END {print count+0}')"
+
+    printf '  RHI requested:        %s\n' "$rhi_request"
+    printf '  RHI observed:         %s\n' "$(_inir_perf_observed_rhi "$pid")"
+    if [[ "$render_loop" == auto && "$qsg_threads" -gt 0 ]]; then
+        render_loop="threaded (observed)"
+    fi
+    printf '  Render loop:          %s (%s QSG render threads)\n' "$render_loop" "$qsg_threads"
+    printf '  Qt platform:          %s | Wayland display: %s\n' "$qt_platform" "$wayland_display"
+    printf '  Qt FFmpeg policy:     %s\n' "$ffmpeg_policy"
+    if command -v ffmpeg >/dev/null 2>&1; then
+        ffmpeg_hwaccels="$(ffmpeg -hide_banner -hwaccels 2>/dev/null | awk 'NR > 1 && NF { values = values (values ? ", " : "") $1 } END { print values }')"
+        printf '  FFmpeg hwaccels:      %s\n' "${ffmpeg_hwaccels:-(none reported)}"
+    else
+        printf '  FFmpeg hwaccels:      ffmpeg unavailable\n'
+    fi
+
+    local vaapi_drivers="" va_driver va_name
+    declare -A vaapi_seen=()
+    for va_driver in /usr/lib/dri/*_drv_video.so /usr/lib64/dri/*_drv_video.so; do
+        [[ -f "$va_driver" ]] || continue
+        va_name="$(basename -- "$va_driver")"
+        [[ -n "${vaapi_seen[$va_name]:-}" ]] && continue
+        vaapi_seen[$va_name]=1
+        vaapi_drivers+="${vaapi_drivers:+, }$va_name"
+    done
+    printf '  VA-API drivers:       %s\n' "${vaapi_drivers:-(none found)}"
+    printf '  VA-API runtime:       libva loaded=%s, render-node FDs=%s\n' "$libva_loaded" "$render_node_fds"
+    printf '  Qt Multimedia:        %s demuxer, %s video, %s audio, %s codec workers\n' \
+        "$ffmpeg_demuxers" "$ffmpeg_video_renderers" "$ffmpeg_audio_renderers" "$decoder_workers"
+
+    printf '  DRM devices:\n'
+    local drm_rows drm_card drm_render drm_driver drm_vendor drm_device drm_boot drm_access
+    drm_rows="$(_inir_perf_drm_devices)"
+    if [[ -n "$drm_rows" ]]; then
+        while IFS=$'\t' read -r drm_card drm_render drm_driver drm_vendor drm_device drm_boot drm_access; do
+            printf '    %s -> %s, driver=%s, vendor=%s, device=%s, boot_vga=%s, render_access=%s\n' \
+                "$drm_card" "$drm_render" "$drm_driver" "$drm_vendor" "$drm_device" "$drm_boot" "$drm_access"
+        done <<< "$drm_rows"
+    else
+        printf '    (none found)\n'
+    fi
+
+    printf '  Open media files:\n'
+    local media_rows media_count media_path duplicate_media=false
+    media_rows="$(_inir_perf_open_media "$pid")"
+    if [[ -n "$media_rows" ]]; then
+        while IFS=$'\t' read -r media_count media_path; do
+            printf '    %s× %s\n' "$media_count" "$media_path"
+            [[ "$media_count" =~ ^[0-9]+$ && "$media_count" -gt 1 ]] && duplicate_media=true
+        done <<< "$media_rows"
+    else
+        printf '    (none)\n'
+    fi
+    $duplicate_media && recommendations+=("The same media file is open more than once inside Quickshell; inspect duplicate visible video surfaces or retained decoders.")
+
+    printf '  Mapped layer surfaces:\n'
+    local layer_names layer_count
+    layer_names="$(_inir_perf_layer_names "$pid")"
+    if [[ -n "$layer_names" ]]; then
+        layer_count="$(printf '%s\n' "$layer_names" | awk 'NF {count++} END {print count+0}')"
+        printf '    %s total: %s\n' "$layer_count" "$(printf '%s\n' "$layer_names" | awk 'NF { value = value (value ? ", " : "") $0 } END { print value }')"
+    else
+        printf '    unavailable (not Niri, missing socket, or compositor query failed)\n'
+    fi
+    printf '\n'
+
     printf '=== Child processes ===\n'
     { pgrep -P "$pid" -a 2>/dev/null || true; } | awk '{
         cmd=""
@@ -1005,10 +1199,10 @@ _inir_doctor_perf() {
         if [[ "$proc_comm" == "qs" ]]; then
             proc_note="shell"
         elif [[ "$proc_comm" == "awww-daemon" ]]; then
-            proc_note="wallpaper daemon counted under shell"
+            proc_note="wallpaper daemon counted under iNiR"
             saw_awww=true
         elif [[ "$proc_comm" == "wl-copy" ]]; then
-            proc_note="clipboard helper counted under shell"
+            proc_note="clipboard helper counted under iNiR"
             saw_wlcopy=true
         elif [[ "$proc_comm" == "cava" ]]; then
             proc_note="audio visualizer helper"
@@ -1019,7 +1213,7 @@ _inir_doctor_perf() {
         elif [[ "$proc_comm" == "bash" ]]; then
             proc_note="shell helper"
         else
-            proc_note="possible launched app/helper inside shell cgroup"
+            proc_note="possible launched app/helper inside iNiR cgroup"
             saw_possible_app=true
         fi
         if ((${#proc_cmd} > 120)); then
@@ -1037,8 +1231,8 @@ _inir_doctor_perf() {
     else
         printf '  (no processes found under inir.service)\n'
     fi
-    $saw_awww && recommendations+=("awww-daemon is inside inir.service, so cgroup tools count wallpaper daemon memory/CPU as shell.")
-    $saw_wlcopy && recommendations+=("wl-copy is inside inir.service; clipboard helpers may appear as shell resource usage.")
+    $saw_awww && recommendations+=("awww-daemon is inside inir.service, so cgroup tools count wallpaper daemon memory/CPU as iNiR.")
+    $saw_wlcopy && recommendations+=("wl-copy is inside inir.service; clipboard helpers may appear as iNiR resource usage.")
     $saw_possible_app && recommendations+=("Non-shell processes are inside inir.service. Check #167 before trusting cgroup-level app totals.")
     printf '\n'
 
@@ -1046,8 +1240,8 @@ _inir_doctor_perf() {
         printf '=== Enabled features ===\n'
         local style family animations effects_blur compositor_blur
         style="$(jq -r '.appearance.globalStyle // "material"' "$cfg_path" 2>/dev/null)"
-        family="$(jq -r '.appearance.panelFamily // "ii"' "$cfg_path" 2>/dev/null)"
-        animations="$(jq -r '.appearance.animationsEnabled // true' "$cfg_path" 2>/dev/null)"
+        family="$(jq -r '.panelFamily // "ii"' "$cfg_path" 2>/dev/null)"
+        animations="$(jq -r 'if (.performance.reduceAnimations // false) then false else true end' "$cfg_path" 2>/dev/null)"
         effects_blur="$(jq -r '.background.effects.enableBlur // false' "$cfg_path" 2>/dev/null)"
         compositor_blur="$(jq -r '.performance.compositorBlur // true' "$cfg_path" 2>/dev/null)"
         printf '  Config file:     %s\n' "$cfg_path"
@@ -1133,7 +1327,7 @@ check_qs_abi() {
             runtime_qt="$(pkg-config --modversion Qt6Core 2>/dev/null || true)"
         fi
         # Compare full version (major.minor.patch). Quickshell warns on patch bumps too
-        # (private API changes between 6.11.0 and 6.11.1 are common), so shell must match.
+        # (private API changes between 6.11.0 and 6.11.1 are common), so iNiR must match.
         if [[ -n "$buildtime_qt" && -n "$runtime_qt" && "$buildtime_qt" != "$runtime_qt" ]]; then
             mismatch_detected=true
             mismatch_msg="Quickshell built against Qt $buildtime_qt but system has Qt $runtime_qt"
@@ -1254,7 +1448,7 @@ canonicalize_path() {
 }
 
 detect_running_instance_dir() {
-    # Find the config directory of an already-running shell instance.
+    # Find the config directory of an already-running iNiR shell instance.
     # Returns 0 and prints the dir if found, returns 1 otherwise.
     local running_path=""
 
@@ -1379,8 +1573,9 @@ _get_systemd_user_env() {
     fi
     _cached_systemd_env_fetched=true
     # 3s timeout: if D-Bus isn't ready yet, bail out and let the shell start
-    # with whatever env it already has.  Apps launched later will inherit the
-    # full env from systemd once it catches up.
+    # with whatever env it already has. ShellExec re-reads the live user-manager
+    # environment at application launch time, so this startup snapshot is not
+    # treated as the application environment.
     _cached_systemd_env="$(timeout 3s systemctl --user show-environment 2>/dev/null)" || true
     printf '%s' "$_cached_systemd_env"
 }
@@ -1420,27 +1615,72 @@ apply_gpu_policy() {
     done
     [[ -z "$has_dgpu" || -z "$igpu_pci" ]] && return
 
+    # Track only variables iNiR injects for the shell. App launchers use this
+    # marker to remove shell-only GPU policy before starting user applications,
+    # so Steam/Wine/compute workloads retain the user's normal GPU selection.
+    local _gpu_policy_vars=""
+
     # Vulkan loader: skip NVIDIA's ICD entirely (loader 1.3.207+).  Without
     # this the loader dlopens libnvidia-* during enumeration, which is what
     # opens the /dev/nvidia* fds in #136's lsof.
-    [[ -z "${VK_LOADER_DRIVERS_DISABLE:-}" ]] && export VK_LOADER_DRIVERS_DISABLE="*nvidia*"
+    if [[ -z "${VK_LOADER_DRIVERS_DISABLE:-}" ]]; then
+        export VK_LOADER_DRIVERS_DISABLE="*nvidia*"
+        _gpu_policy_vars+=" VK_LOADER_DRIVERS_DISABLE"
+    fi
     # Mesa Vulkan device-select: prefer the iGPU PCI bus.
-    [[ -z "${MESA_VK_DEVICE_SELECT:-}" ]] && export MESA_VK_DEVICE_SELECT="pci-$igpu_pci"
-    [[ -z "${MESA_VK_DEVICE_SELECT_FORCE_DEFAULT_DEVICE:-}" ]] && export MESA_VK_DEVICE_SELECT_FORCE_DEFAULT_DEVICE=1
+    if [[ -z "${MESA_VK_DEVICE_SELECT:-}" ]]; then
+        export MESA_VK_DEVICE_SELECT="pci-$igpu_pci"
+        _gpu_policy_vars+=" MESA_VK_DEVICE_SELECT"
+    fi
+    if [[ -z "${MESA_VK_DEVICE_SELECT_FORCE_DEFAULT_DEVICE:-}" ]]; then
+        export MESA_VK_DEVICE_SELECT_FORCE_DEFAULT_DEVICE=1
+        _gpu_policy_vars+=" MESA_VK_DEVICE_SELECT_FORCE_DEFAULT_DEVICE"
+    fi
     # GLVND: OpenGL via Mesa, not NVIDIA's libGLX.
-    [[ -z "${__GLX_VENDOR_LIBRARY_NAME:-}" ]] && export __GLX_VENDOR_LIBRARY_NAME=mesa
-    [[ -z "${__NV_PRIME_RENDER_OFFLOAD:-}" ]] && export __NV_PRIME_RENDER_OFFLOAD=0
-    # Qt FFmpeg: no NVDEC/CUDA hwaccel.
-    [[ -z "${QT_FFMPEG_DECODING_HW_DEVICE_TYPES+x}" ]] && export QT_FFMPEG_DECODING_HW_DEVICE_TYPES=
+    if [[ -z "${__GLX_VENDOR_LIBRARY_NAME:-}" ]]; then
+        export __GLX_VENDOR_LIBRARY_NAME=mesa
+        _gpu_policy_vars+=" __GLX_VENDOR_LIBRARY_NAME"
+    fi
+    if [[ -z "${__NV_PRIME_RENDER_OFFLOAD:-}" ]]; then
+        export __NV_PRIME_RENDER_OFFLOAD=0
+        _gpu_policy_vars+=" __NV_PRIME_RENDER_OFFLOAD"
+    fi
+    # Qt FFmpeg: keep the NVIDIA decoder paths out without disabling hardware
+    # decoding altogether. VAAPI uses the Mesa iGPU selected above; when VAAPI
+    # is unavailable Qt falls back to software decoding instead of waking CUDA.
+    if [[ -z "${QT_FFMPEG_DECODING_HW_DEVICE_TYPES+x}" ]]; then
+        export QT_FFMPEG_DECODING_HW_DEVICE_TYPES=vaapi
+        _gpu_policy_vars+=" QT_FFMPEG_DECODING_HW_DEVICE_TYPES"
+    fi
     # NVIDIA optimus Vulkan layer: pretend iGPU only.
-    [[ -z "${__VK_LAYER_NV_optimus:-}" ]] && export __VK_LAYER_NV_optimus=non_NVIDIA_only
-    # VDPAU: Qt FFmpeg probes libvdpau_nvidia.so on init even with hwaccel off.
-    [[ -z "${VDPAU_DRIVER:-}" ]] && export VDPAU_DRIVER=none
+    if [[ -z "${__VK_LAYER_NV_optimus:-}" ]]; then
+        export __VK_LAYER_NV_optimus=non_NVIDIA_only
+        _gpu_policy_vars+=" __VK_LAYER_NV_optimus"
+    fi
+    # Block legacy NVIDIA VDPAU probing; Qt Multimedia still has VAAPI above.
+    if [[ -z "${VDPAU_DRIVER:-}" ]]; then
+        export VDPAU_DRIVER=none
+        _gpu_policy_vars+=" VDPAU_DRIVER"
+    fi
+
+    if [[ -n "$_gpu_policy_vars" ]]; then
+        export INIR_SHELL_GPU_POLICY_VARS="${_gpu_policy_vars# }"
+    fi
 }
 
 apply_qt_runtime_env() {
     # Must run before Qt reads env at QGuiApplication construction.
     apply_gpu_policy
+
+    # Scene graph texture atlas.  Qt allocates one atlas per QQuickWindow, and
+    # the shell runs ~9 of them (bar, background, backdrop, dock, strip, pill,
+    # plus instantiated-but-hidden panels).  The 2048x2048 default costs 16 MB
+    # of GPU memory each — 144 MB of atlas before drawing anything.  1024x1024
+    # holds every icon/glyph the shell actually batches; measured 1007 MB ->
+    # 785 MB RSS with no visual change.  Qt spills to additional atlases if one
+    # fills, so nothing breaks if a texture doesn't fit.
+    [[ -z "${QSG_ATLAS_WIDTH:-}" ]] && export QSG_ATLAS_WIDTH=1024
+    [[ -z "${QSG_ATLAS_HEIGHT:-}" ]] && export QSG_ATLAS_HEIGHT=1024
 
     # Ensure WAYLAND_DISPLAY is set — required for Qt to select the wayland
     # platform backend.  When systemd starts inir.service at boot, the
@@ -1521,10 +1761,10 @@ apply_qt_runtime_env() {
     # XDG_SESSION_TYPE, no DISPLAY, no XCURSOR_*, etc.).  By the time
     # wait_for_wayland_socket() returns, the compositor (niri/hyprland) has
     # already run its import-environment step, so the systemd user manager's
-    # environment is complete.  We pull any still-missing critical vars into
-    # this process so that Quickshell's INITIAL_ENVIRONMENT snapshot — which
-    # is frozen at QS startup and inherited by every app launched via
-    # DesktopEntry.execute() — contains them.
+    # environment is complete. We still pull missing critical vars into the
+    # Quickshell process because internal helpers and the shell itself need a
+    # healthy startup environment. User-facing app launches re-sync through
+    # ShellExec instead of trusting this frozen process snapshot.
     #
     # Without this:
     #   • Chromium/Brave/Electron apps don't see XDG_SESSION_TYPE=wayland and
@@ -1548,9 +1788,8 @@ apply_qt_runtime_env() {
         done
         # Use the manager's rich PATH (set by compositor + PAM login) which
         # includes user dirs (~/.local/bin, flatpak exports, nvm, pnpm, etc.)
-        # absent from the minimal systemd unit PATH.  All apps launched via
-        # DesktopEntry.execute() inherit Quickshell's INITIAL_ENVIRONMENT, so
-        # they need the full PATH to locate binaries outside /usr/bin.
+        # absent from the minimal systemd unit PATH. ShellExec repeats this
+        # synchronization at user-app launch time to avoid a stale snapshot.
         local _qs_sys_path
         _qs_sys_path="$(grep '^PATH=' <<< "$_qs_sys_env" | head -1 | cut -d= -f2- || true)"
         if [[ -n "$_qs_sys_path" && "$_qs_sys_path" != "$PATH" ]]; then
@@ -1565,12 +1804,25 @@ apply_qt_runtime_env() {
         fi
     fi
 
-    # Electron Wayland hint — must be in the process env so launched Electron apps
-    # (Discord, VS Code, Chrome, Brave) use Wayland natively instead of X11.
-    # The systemd import above may already have set it; this is the hardcoded fallback
-    # for race conditions where niri hasn't propagated it yet.
+    # Electron Wayland hint for the shell's startup environment and legacy
+    # internal child paths. User-facing apps take the live user-manager value
+    # through ShellExec, so this fallback never becomes a forced app policy.
     if [[ -z "${ELECTRON_OZONE_PLATFORM_HINT:-}" ]]; then
         export ELECTRON_OZONE_PLATFORM_HINT=auto
+    fi
+
+    # DISPLAY fallback for Quickshell's own startup snapshot. X11-only children
+    # need a valid display, but :0 is not special: a greeter may own it while
+    # niri/xwayland-satellite owns :1 or later. ShellExec validates DISPLAY
+    # again at application launch time and prefers the live user-manager value.
+    if [[ -z "${DISPLAY:-}" ]]; then
+        local _x _xnum
+        for _x in /tmp/.X11-unix/X*; do
+            [[ -S "$_x" ]] || continue
+            [[ "$(stat -c %U "$_x" 2>/dev/null)" == "$(id -un)" ]] || continue
+            export DISPLAY=":${_x##*/X}"
+            break
+        done
     fi
 }
 
@@ -1594,7 +1846,7 @@ apply_qt_logging_rules() {
 resolve_config_dir() {
     if [[ -n "$config_dir" ]]; then
         if [[ ! -f "$config_dir/shell.qml" ]]; then
-            echo "Invalid config path: $config_dir" >&2
+            echo "Invalid iNiR config path: $config_dir" >&2
             exit 1
         fi
         config_dir="$(canonicalize_path "$config_dir")"
@@ -1621,7 +1873,7 @@ resolve_config_dir() {
         fi
     done
 
-    echo "Could not find an shell payload" >&2
+    echo "Could not find an iNiR shell payload" >&2
     exit 1
 }
 
@@ -1841,11 +2093,13 @@ ensure_systemd_graphical_env() {
         if [[ -n "${DISPLAY:-}" ]]; then
             vars_to_import+=("DISPLAY=$DISPLAY")
         else
-            # Probe for XWayland socket — compositor may have started it but not
-            # yet exported DISPLAY to systemd.
+            # Probe for the live XWayland socket — the compositor may have
+            # started it but not yet exported DISPLAY to systemd.  Only
+            # user-owned sockets count; the greeter's root-owned Xorg socket
+            # (sddm on :0) is not the session display.
             local _xsock
             for _xsock in /tmp/.X11-unix/X*; do
-                if [[ -S "$_xsock" ]]; then
+                if [[ -S "$_xsock" ]] && [[ "$(stat -c %U "$_xsock" 2>/dev/null)" == "$(id -un)" ]]; then
                     local _xnum
                     _xnum="$(basename "$_xsock" | sed 's/^X//')"
                     vars_to_import+=("DISPLAY=:${_xnum}")
@@ -1993,6 +2247,26 @@ cleanup_orphans() {
         [[ "$_cgroup" == *"inir.service"* ]] || continue
         kill "$_pid" 2>/dev/null || true
     done < <(pgrep -f 'keyboard_lock_state_daemon\.py|nmcli monitor' 2>/dev/null || true)
+
+    # Phase 6: Thumbnail generation uses a multiprocessing pool. Older runs
+    # could outlive qs because KillMode=process intentionally preserves apps
+    # launched from the shell. Limit cleanup to iNiR's own thumbnail commands
+    # inside this service cgroup; never match arbitrary Python or user jobs.
+    local _thumb_pattern='scripts/thumbnails/(thumbgen-venv\.sh|thumbgen\.py|generate-thumbnails-magick\.sh)'
+    local _thumb_pids=()
+    while IFS= read -r _pid; do
+        [[ -n "$_pid" ]] || continue
+        _thumb_pids+=("$_pid")
+        kill "$_pid" 2>/dev/null || true
+    done < <(pgrep -f "$_thumb_pattern" 2>/dev/null || true)
+
+    if (( ${#_thumb_pids[@]} > 0 )); then
+        sleep 0.2
+        for _pid in "${_thumb_pids[@]}"; do
+            kill -0 "$_pid" 2>/dev/null || continue
+            kill -KILL "$_pid" 2>/dev/null || true
+        done
+    fi
 }
 
 kill_shell() {
@@ -2041,25 +2315,25 @@ restart_shell() {
 
     if is_inir_service_enabled; then
         ensure_service_unit_available
-        [[ -z "$quiet" ]] && printf 'Restarting shell service... '
+        [[ -z "$quiet" ]] && printf 'Restarting iNiR service... '
         restart_inir_service_or_fail "$dir" "$quiet"
         return 0
     fi
 
     if has_instances "$dir"; then
-        [[ -z "$quiet" ]] && printf 'Stopping shell... '
+        [[ -z "$quiet" ]] && printf 'Stopping iNiR... '
         kill_shell "$dir"
         if ! wait_for_stop "$dir"; then
-            echo "Timed out waiting for shell to stop" >&2
+            echo "Timed out waiting for iNiR to stop" >&2
             exit 1
         fi
         [[ -z "$quiet" ]] && printf 'done.\n'
     fi
 
-    [[ -z "$quiet" ]] && printf 'Starting shell... '
+    [[ -z "$quiet" ]] && printf 'Starting iNiR... '
     start_background "$dir"
     if ! wait_for_start "$dir"; then
-        echo "Timed out waiting for shell to start" >&2
+        echo "Timed out waiting for iNiR to start" >&2
         exit 1
     fi
     [[ -z "$quiet" ]] && printf 'done.\n'
@@ -2080,7 +2354,7 @@ open_settings() {
     local dir="$1"
 
     if ! ensure_running_instance "$dir"; then
-        echo "Timed out waiting for shell to start" >&2
+        echo "Timed out waiting for iNiR to start" >&2
         exit 1
     fi
 
@@ -2250,7 +2524,7 @@ run_repair() {
     apply_shell_scale
     start_background "$dir"
     if ! wait_for_start "$dir"; then
-        echo "Timed out waiting for shell to start during repair" >&2
+        echo "Timed out waiting for iNiR to start during repair" >&2
         exit 1
     fi
 
@@ -2531,13 +2805,13 @@ restart_inir_service_or_fail() {
     systemctl --user restart inir.service >/dev/null 2>&1 || true
 
     if ! wait_for_start "$dir"; then
-        echo "Timed out waiting for shell to start" >&2
+        echo "Timed out waiting for iNiR to start" >&2
         report_inir_service_failure
         exit 1
     fi
 
     if ! systemctl --user is-active --quiet inir.service >/dev/null 2>&1; then
-        echo "shell service failed to start" >&2
+        echo "iNiR service failed to start" >&2
         report_inir_service_failure
         exit 1
     fi
@@ -2569,8 +2843,21 @@ install_user_service() {
     sed -e "s|^ExecStart=.*|ExecStart=${escaped_launcher} run --session|" \
         -e "s|^ExecStopPost=-.*|ExecStopPost=-${escaped_launcher} cleanup-orphans|" \
         "$asset_path" > "$tmp_file"
+    if [[ -L "$systemd_user_dir/inir.service" ]]; then
+        # Never leave a developer install pointing at the portable template:
+        # it uses /usr/bin/inir and fails with 203/EXEC before a local drop-in
+        # has been generated.  Install the fully rendered unit as a real file.
+        rm -f "$systemd_user_dir/inir.service"
+    fi
     cp -f "$tmp_file" "$systemd_user_dir/inir.service"
     rm -f "$tmp_file"
+
+    local service_dropin_dir="$systemd_user_dir/inir.service.d"
+    local service_override="$service_dropin_dir/override.conf"
+    if [[ -f "$service_override" ]] && grep -q '^# Managed locally:' "$service_override"; then
+        rm -f "$service_override"
+        rmdir "$service_dropin_dir" 2>/dev/null || true
+    fi
 
     # Migrate: remove old WantedBy=graphical-session.target symlink left by
     # previous versions that used [Install] + systemctl enable.  This is the
@@ -2806,7 +3093,7 @@ show_version() {
             return
         fi
 
-        printf 'Shell %s\n' "$live_version"
+        printf 'iNiR %s\n' "$live_version"
         printf 'commit: %s\n' "$live_commit"
         printf 'install mode: repo-link\n'
         printf 'update strategy: repo-setup\n'
@@ -2829,7 +3116,7 @@ show_version() {
         fi
 
         if command -v jq >/dev/null 2>&1; then
-            printf 'Shell %s\n' "$(jq -r '.version // "unknown"' "$version_file")"
+            printf 'iNiR %s\n' "$(jq -r '.version // "unknown"' "$version_file")"
             printf 'commit: %s\n' "$(jq -r '.commit // "unknown"' "$version_file")"
             printf 'install mode: %s\n' "$(jq -r '.installMode // .install_mode // "unknown"' "$version_file")"
             printf 'update strategy: %s\n' "$(jq -r '.updateStrategy // .update_strategy // "unknown"' "$version_file")"
@@ -2860,7 +3147,7 @@ show_version() {
         return
     fi
 
-    printf 'Shell %s\n' "$(tr -d '[:space:]' < "$setup_dir/VERSION")"
+    printf 'iNiR %s\n' "$(tr -d '[:space:]' < "$setup_dir/VERSION")"
     printf 'runtime: %s\n' "${runtime_path:-$setup_dir}"
 }
 
@@ -2962,7 +3249,7 @@ run_ipc_target_command() {
 
     resolve_config_dir
     if ! ensure_running_instance_for_ipc "$config_dir" "${1:-}"; then
-        echo "Timed out waiting for shell to start" >&2
+        echo "Timed out waiting for iNiR to start" >&2
         exit 1
     fi
     # IPC handlers for most panels register ~500ms after shell start (deferred panel
@@ -2972,6 +3259,219 @@ run_ipc_target_command() {
         has_instances "$config_dir" && sleep 0.5
         exec "$qs_bin" -p "$config_dir" ipc call "$target" "$@"
     fi
+}
+
+run_dev_audit() {
+    local include_all_families=false include_all_destinations=false
+    local -a requested_destinations=()
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --all-families) include_all_families=true; shift ;;
+            --all) include_all_destinations=true; shift ;;
+            -h|--help)
+                cat <<'EOF'
+Usage: inir dev audit [--all] [--all-families] [DESTINATION...]
+
+Audit destinations related to changed worktree files, or the destinations
+named explicitly. --all restores the exhaustive audit. The active panel
+family is used by default; --all-families audits both ii and waffle.
+EOF
+                return 0
+                ;;
+            --*) echo "Unknown option: $1" >&2; return 1 ;;
+            *) requested_destinations+=("$1"); shift ;;
+        esac
+    done
+
+    require_qs
+    resolve_config_dir
+    ensure_running_instance_for_ipc "$config_dir" list || {
+        echo "Timed out waiting for iNiR to start" >&2
+        return 1
+    }
+    command -v jq >/dev/null 2>&1 || {
+        echo "inir dev audit requires jq" >&2
+        return 1
+    }
+
+    local config_file family original_family inventory log_before log_after fresh id settle response failures=0 visited=0
+    config_file="$(inir_config_file)"
+    family="$(jq -r '.panelFamily // "ii"' "$config_file" 2>/dev/null || printf 'ii')"
+    original_family="$family"
+    inventory="$("$qs_bin" -p "$config_dir" ipc call dev list)"
+    if ! jq -e 'type == "array"' >/dev/null 2>&1 <<<"$inventory"; then
+        echo "dev list did not return a JSON array" >&2
+        return 1
+    fi
+
+    local -A selected_ids=()
+    local destination changed_path area normalized_area normalized_id
+    select_destination() {
+        local candidate="$1"
+        if ! jq -e --arg id "$candidate" '.[] | select(.id == $id and .safe == true)' >/dev/null <<<"$inventory"; then
+            echo "Unknown or unsafe development destination: $candidate" >&2
+            return 1
+        fi
+        selected_ids["$candidate"]=1
+    }
+    select_prefix() {
+        local prefix="$1"
+        while IFS= read -r destination; do
+            [[ -n "$destination" ]] && selected_ids["$destination"]=1
+        done < <(jq -r --arg prefix "$prefix" '.[] | select(.safe == true and (.id == $prefix or (.id | startswith($prefix + "/")))) | .id' <<<"$inventory")
+        return 0
+    }
+    select_all_destinations() {
+        while IFS= read -r destination; do
+            [[ -n "$destination" ]] && selected_ids["$destination"]=1
+        done < <(jq -r '.[] | select(.safe == true) | .id' <<<"$inventory")
+        return 0
+    }
+    select_settings_area() {
+        normalized_area="$(tr '[:upper:]' '[:lower:]' <<<"$1" | tr -cd '[:alnum:]')"
+        while IFS= read -r destination; do
+            normalized_id="$(tr '[:upper:]' '[:lower:]' <<<"${destination#settings/}" | tr -cd '[:alnum:]')"
+            [[ "$normalized_id" == "$normalized_area" ]] && selected_ids["$destination"]=1
+        done < <(jq -r '.[] | select(.safe == true and (.id | startswith("settings/"))) | .id' <<<"$inventory")
+        return 0
+    }
+
+    if [[ ${#requested_destinations[@]} -gt 0 ]]; then
+        for destination in "${requested_destinations[@]}"; do
+            select_destination "$destination" || return 1
+        done
+    elif [[ "$include_all_destinations" == true ]]; then
+        select_all_destinations
+    elif git -C "$launcher_root" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        while IFS= read -r -d '' changed_path; do
+            case "$changed_path" in
+                GlobalStates.qml|ShellIiPanels.qml|ShellWafflePanels.qml|shell.qml|settings.qml|waffleSettings.qml|defaults/config.json|modules/common/Config.qml|modules/common/Appearance.qml|modules/common/Looks.qml|modules/common/widgets/*)
+                    : ;; # Broad files do not turn a focused audit into an exhaustive one.
+                modules/sidebarLeft/aiChat/*|modules/sidebarLeft/AiChat.qml|modules/sidebarLeft/ApiInputBoxIndicator.qml|services/Ai.qml|services/ai/*)
+                    select_prefix "sidebar-left/ai"; select_prefix "settings/ai" ;;
+                modules/sidebarLeft/widgets/*|modules/sidebarLeft/WidgetsView.qml)
+                    select_prefix "sidebar-left/widgets" ;;
+                modules/sidebarLeft/*)
+                    area="${changed_path#modules/sidebarLeft/}"
+                    area="${area%%/*}"
+                    case "$area" in
+                        *AnimeSchedule*) select_prefix "sidebar-left/anime-schedule" ;;
+                        *Anime*) select_prefix "sidebar-left/anime" ;;
+                        *News*) select_prefix "sidebar-left/news" ;;
+                        *Software*) select_prefix "sidebar-left/software" ;;
+                        *YtMusic*|innertune) select_prefix "sidebar-left/ytmusic" ;;
+                        *Translator*) select_prefix "sidebar-left/translator" ;;
+                        *Wallhaven*) select_prefix "sidebar-left/wallhaven" ;;
+                        *Tools*|plugins) select_prefix "sidebar-left/tools" ;;
+                        *) : ;;
+                    esac ;;
+                modules/sidebarRight/notifications/*) select_prefix "sidebar-right/notifications" ;;
+                modules/sidebarRight/events/*) select_prefix "sidebar-right/events" ;;
+                modules/sidebarRight/todo/*) select_prefix "sidebar-right/todo" ;;
+                modules/sidebarRight/notepad/*) select_prefix "sidebar-right/notepad" ;;
+                modules/sidebarRight/calculator/*) select_prefix "sidebar-right/calculator" ;;
+                modules/sidebarRight/weather/*) select_prefix "sidebar-right/weather" ;;
+                modules/sidebarRight/*) : ;;
+                modules/controlPanel/*) select_prefix "control-panel" ;;
+                modules/dashboard/*) select_prefix "dashboard" ;;
+                modules/mediaControls/*) select_prefix "media-controls" ;;
+                modules/clipboard/*) select_prefix "clipboard"; select_prefix "overview/clipboard" ;;
+                modules/cheatsheet/*) select_prefix "cheatsheet" ;;
+                modules/overview/*) select_prefix "overview" ;;
+                modules/wallpaperSelector/*) select_prefix "wallpaper" ;;
+                modules/tilingAssistance/*) select_prefix "tiling" ;;
+                modules/waffle/startMenu/*) select_prefix "waffle/start"; select_prefix "waffle/all-apps"; select_prefix "waffle/search" ;;
+                modules/waffle/actionCenter/*) select_prefix "waffle/action-center" ;;
+                modules/waffle/notificationCenter/*) select_prefix "waffle/notification-center" ;;
+                modules/waffle/widgets/*) select_prefix "waffle/widgets" ;;
+                modules/waffle/taskView/*) select_prefix "waffle/taskview" ;;
+                modules/settings/SettingsOverlay.qml|modules/settings/SettingsPageRegistry.qml)
+                    : ;;
+                modules/settings/*Config.qml)
+                    area="${changed_path##*/}"; area="${area%Config.qml}"; select_settings_area "$area" ;;
+                modules/waffle/settings/pages/W*Page.qml)
+                    area="${changed_path##*/}"; area="${area#W}"; area="${area%Page.qml}"; select_settings_area "$area" ;;
+                services/Notifications.qml) select_prefix "sidebar-right/notifications"; select_prefix "waffle/notification-center" ;;
+                services/Weather.qml) select_prefix "sidebar-right/weather"; select_prefix "dashboard" ;;
+                services/Events.qml|services/Calendar*.qml) select_prefix "sidebar-right/calendar"; select_prefix "sidebar-right/events"; select_prefix "dashboard" ;;
+                services/Todo.qml) select_prefix "sidebar-right/todo"; select_prefix "dashboard" ;;
+                services/*) : ;;
+            esac
+        done < <({ git -C "$launcher_root" diff --name-only -z HEAD; git -C "$launcher_root" ls-files --others --exclude-standard -z; } | sort -zu)
+    fi
+
+    if [[ ${#selected_ids[@]} -eq 0 ]]; then
+        echo "No changed UI areas were detected. Pass a destination or use --all."
+        return 0
+    fi
+
+    local selected_json
+    selected_json="$(printf '%s\n' "${!selected_ids[@]}" | sort | jq -Rsc 'split("\n") | map(select(length > 0))')"
+    printf 'Scope: %s\n' "$(jq -r 'join(", ")' <<<"$selected_json")"
+
+    local error_pattern='WARN scene:|ReferenceError|TypeError|Unable to assign|Binding loop|Cannot assign|Cannot open|Failed to load|Error loading'
+    trap '"$qs_bin" -p "$config_dir" ipc call dev close >/dev/null 2>&1 || true; current_family="$(jq -r '\''.panelFamily // "ii"'\'' "$config_file" 2>/dev/null)"; if [[ "$current_family" != "$original_family" ]]; then "$qs_bin" -p "$config_dir" ipc call panelFamily set "$original_family" >/dev/null 2>&1 || true; fi' INT TERM
+
+    local families=("$family")
+    $include_all_families && families=(ii waffle)
+    for family in "${families[@]}"; do
+        if [[ "$(jq -r '.panelFamily // "ii"' "$config_file" 2>/dev/null)" != "$family" ]]; then
+            response="$("$qs_bin" -p "$config_dir" ipc call panelFamily set "$family" 2>&1 || true)"
+            local family_wait
+            for family_wait in {1..20}; do
+                [[ "$(jq -r '.panelFamily // "ii"' "$config_file" 2>/dev/null)" == "$family" ]] && break
+                sleep 0.25
+            done
+            if [[ "$(jq -r '.panelFamily // "ii"' "$config_file" 2>/dev/null)" != "$family" ]]; then
+                printf 'FAIL family/%-35s %s\n' "$family" "$response"
+                failures=$((failures + 1))
+                continue
+            fi
+        fi
+
+        printf '\nFamily: %s\n' "$family"
+        # Family loaders register/unregister their lightweight IPC routers
+        # asynchronously. Keep those transition logs out of the first view's
+        # attribution window.
+        sleep 1.5
+        while IFS=$'\t' read -r id settle; do
+            [[ -n "$id" ]] || continue
+            visited=$((visited + 1))
+            log_before="$(mktemp)"
+            log_after="$(mktemp)"
+            fresh="$(mktemp)"
+            "$0" logs --full >"$log_before" 2>/dev/null || true
+
+            response="$("$qs_bin" -p "$config_dir" ipc call dev open "$id" 2>&1 || true)"
+            if [[ "$response" != "ok:$id" ]]; then
+                printf 'FAIL %-42s %s\n' "$id" "$response"
+                failures=$((failures + 1))
+                rm -f "$log_before" "$log_after" "$fresh"
+                continue
+            fi
+
+            sleep "$(printf '%d.%03d' $((settle / 1000)) $((settle % 1000)))"
+            "$0" logs --full >"$log_after" 2>/dev/null || true
+            tail -n +$(( $(wc -l <"$log_before") + 1 )) "$log_after" >"$fresh"
+            if rg -n "$error_pattern" "$fresh"; then
+                printf 'FAIL %s\n' "$id"
+                failures=$((failures + 1))
+            else
+                printf 'PASS %s\n' "$id"
+            fi
+            "$qs_bin" -p "$config_dir" ipc call dev close >/dev/null 2>&1 || true
+            rm -f "$log_before" "$log_after" "$fresh"
+        done < <(jq -r --arg family "$family" --argjson selected "$selected_json" '.[] | select(.safe == true and (.family == "shared" or .family == $family) and (.id as $id | $selected | index($id))) | [.id, (.settleMs // 350)] | @tsv' <<<"$inventory")
+    done
+
+    "$qs_bin" -p "$config_dir" ipc call dev close >/dev/null 2>&1 || true
+    if [[ "$(jq -r '.panelFamily // "ii"' "$config_file" 2>/dev/null)" != "$original_family" ]]; then
+        "$qs_bin" -p "$config_dir" ipc call panelFamily set "$original_family" >/dev/null 2>&1 || true
+    fi
+    trap - INT TERM
+
+    printf '\nVisited: %d  Failures: %d  Original family: %s\n' "$visited" "$failures" "$original_family"
+    [[ "$failures" -eq 0 ]]
 }
 
 launch_configured_browser() {
@@ -3047,7 +3547,7 @@ case "$command_name" in
         check_qs_abi
         check_setup_version_sync "$config_dir"
         if has_instances "$config_dir"; then
-            echo "Shell is already running. Use 'inir restart' to restart." >&2
+            echo "iNiR is already running. Use 'inir restart' to restart." >&2
             exit 0
         fi
         start_background "$config_dir"
@@ -3133,12 +3633,12 @@ case "$command_name" in
         check_qs_abi
         check_setup_version_sync "$config_dir"
         if has_instances "$config_dir"; then
-            echo "Shell is already running. Use 'inir restart' to restart." >&2
+            echo "iNiR is already running. Use 'inir restart' to restart." >&2
             exit 0
         fi
         if [[ "$foreground" == true ]] && is_inir_service_active; then
             if ! is_current_process_inir_service; then
-                echo "Shell is managed by inir.service. Stop it first before running manually." >&2
+                echo "iNiR is managed by inir.service. Stop it first before running manually." >&2
                 exit 1
             fi
         fi
@@ -3181,7 +3681,7 @@ case "$command_name" in
         apply_qt_logging_rules
         check_qs_abi
         if restart_inir_service_if_active; then
-            [[ -z "$restart_quiet" ]] && printf 'Restarting shell service... '
+            [[ -z "$restart_quiet" ]] && printf 'Restarting iNiR service... '
             restart_inir_service_or_fail "$config_dir" "$restart_quiet"
             exit 0
         fi
@@ -3328,12 +3828,21 @@ case "$command_name" in
         fi
         resolve_config_dir
         if ! ensure_running_instance_for_ipc "$config_dir" "${2:-}"; then
-            echo "Timed out waiting for shell to start" >&2
+            echo "Timed out waiting for iNiR to start" >&2
             exit 1
         fi
         if ! "$qs_bin" -p "$config_dir" ipc call "$@" 2>/dev/null; then
             has_instances "$config_dir" && sleep 0.5
             exec "$qs_bin" -p "$config_dir" ipc call "$@"
+        fi
+        ;;
+    dev)
+        if [[ "${1:-}" == "audit" ]]; then
+            shift
+            run_dev_audit "$@"
+        else
+            require_qs
+            run_ipc_target_command dev "$@"
         fi
         ;;
     settings|open)

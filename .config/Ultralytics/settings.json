@@ -1,0 +1,21 @@
+{
+  "settings_version": "0.0.6",
+  "datasets_dir": "/home/sam/Github/Projects/datasets",
+  "weights_dir": "/home/sam/Github/Projects/formation/weights",
+  "runs_dir": "/home/sam/Github/Projects/formation/runs",
+  "uuid": "4085f64f2c90e1a7589f19405bfdcbc29cbb4c79cb63e6a9ddfdf0f5eed88b04",
+  "sync": true,
+  "api_key": "",
+  "openai_api_key": "",
+  "clearml": true,
+  "comet": true,
+  "dvc": true,
+  "hub": true,
+  "mlflow": true,
+  "neptune": true,
+  "raytune": true,
+  "tensorboard": false,
+  "wandb": false,
+  "vscode_msg": true,
+  "openvino_msg": true
+}

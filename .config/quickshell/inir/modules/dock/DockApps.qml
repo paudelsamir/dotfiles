@@ -12,6 +12,7 @@ import Quickshell.Wayland
 
 Item {
     id: root
+    property bool _sortingConsumerAcquired: false
 
     // Debug logging gated behind QS_DEBUG env var (project convention)
     function _log(...args): void {
@@ -25,8 +26,12 @@ Item {
     property bool vertical: false
     property string dockPosition: "bottom"
     property var parentWindow: null
-    readonly property bool pillStyle:   Config.options?.dock?.style === "pill"
-    readonly property bool macosStyle:  Config.options?.dock?.style === "macos"
+    readonly property string surfaceDialect: Appearance.surfaceDialectFor(
+        Config.options?.dock?.style === "island" ? "island" : "")
+    readonly property bool zzzStyle: surfaceDialect === "zzz"
+    readonly property bool inirStyle: surfaceDialect === "inir"
+    readonly property bool pillStyle: Config.options?.dock?.style === "pill" && !zzzStyle
+    readonly property bool macosStyle: Config.options?.dock?.style === "macos" && !zzzStyle
 
     // Propagated hovered index for neighbor magnify in macOS style
     property int macHoveredIndex: -1
@@ -279,6 +284,12 @@ Item {
     // ─── Dock Items Model ────────────────────────────────────────────────
     property var dockItems: []
 
+    // Reactive per-app toplevel map keyed by uniqueId. DockAppButton reads this
+    // instead of its modelData snapshot: ScriptModel matches items by uniqueId,
+    // so a pinned app going open→closed keeps its delegate and the snapshot
+    // would leave a stale running indicator/preview until an unrelated reorder.
+    property var toplevelsByUniqueId: ({})
+
     // Direct reactive binding to Config - will automatically trigger when Config changes
     readonly property bool separatePinnedFromRunning: Config.options?.dock?.separatePinnedFromRunning ?? true
     onSeparatePinnedFromRunningChanged: {
@@ -307,10 +318,15 @@ Item {
         id: rebuildTimer
         interval: 80
         repeat: false
-        onTriggered: root._doRebuildDockItems()
+        onTriggered: {
+            if (root.enabled)
+                root._doRebuildDockItems()
+        }
     }
 
     function rebuildDockItems() {
+        if (!root.enabled)
+            return
         rebuildTimer.restart()
     }
 
@@ -540,6 +556,12 @@ Item {
             }
         }
 
+        // Always refresh the reactive toplevel map, even when the model
+        // structure is unchanged — delegates bind to it for live window state.
+        const tlMap = {}
+        for (const v of values) tlMap[v.uniqueId] = v.toplevels
+        root.toplevelsByUniqueId = tlMap
+
         // Skip update if the model structure is identical — avoids
         // ScriptModel churn and downstream binding re-evaluations.
         if (!_dockItemsEqual(dockItems, values)) {
@@ -549,6 +571,7 @@ Item {
 
     Connections {
         target: ToplevelManager.toplevels
+        enabled: root.enabled
         function onValuesChanged() {
             root.rebuildDockItems()
         }
@@ -556,6 +579,7 @@ Item {
 
     Connections {
         target: CompositorService
+        enabled: root.enabled
         function onSortedToplevelsChanged() {
             root.rebuildDockItems()
         }
@@ -563,6 +587,7 @@ Item {
 
     Connections {
         target: Config.options?.dock
+        enabled: root.enabled
         function onPinnedAppsChanged() {
             root.rebuildDockItems()
         }
@@ -571,7 +596,24 @@ Item {
         }
     }
 
-    Component.onCompleted: rebuildDockItems()
+    function syncSortingDemand(): void {
+        if (root.enabled && !_sortingConsumerAcquired) {
+            CompositorService.acquireSortingConsumer()
+            _sortingConsumerAcquired = true
+            rebuildDockItems()
+        } else if (!root.enabled && _sortingConsumerAcquired) {
+            rebuildTimer.stop()
+            CompositorService.releaseSortingConsumer()
+            _sortingConsumerAcquired = false
+        }
+    }
+
+    onEnabledChanged: syncSortingDemand()
+    Component.onCompleted: syncSortingDemand()
+    Component.onDestruction: {
+        if (_sortingConsumerAcquired)
+            CompositorService.releaseSortingConsumer()
+    }
 
     StyledListView {
         id: listView
@@ -626,7 +668,7 @@ Item {
 
         model: ScriptModel {
             objectProp: "uniqueId"
-            values: root.dockItems
+            values: root.enabled ? root.dockItems : []
         }
 
           delegate: DockAppButton {
@@ -750,8 +792,13 @@ Item {
                         : -(listView.spacing + height) / 2)
                     : (parent.height - height) / 2
 
-                color: Appearance.inirEverywhere ? Appearance.inir.colPrimary
+                color: root.zzzStyle ? Appearance.zzz.tertiary
+                     : root.inirStyle ? Appearance.inir.colPrimary
                      : Appearance.colors.colPrimary
+                Behavior on color {
+                    enabled: Appearance.animationsEnabled
+                    ColorAnimation { duration: Appearance.animation.elementMoveFast.duration; easing.type: Appearance.animation.elementMoveFast.type; easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve }
+                }
 
                 opacity: dockDelegate.isDropTarget ? 0.9 : 0
 
@@ -774,11 +821,13 @@ Item {
             property bool _dragPrimed: false      // Timer fired, awaiting movement
             property bool _longPressTriggered: false // Drag actually started
 
-            downAction: () => {
+            downAction: event => {
                 if (!root.dragEnabled || dockDelegate.isSeparator) return
                 _longPressTriggered = false
                 _dragPrimed = false
-                _hasPressPos = false
+                _pressMouseX = event.x
+                _pressMouseY = event.y
+                _hasPressPos = true
                 _dockPrimeTimer.restart()
             }
 
@@ -786,13 +835,7 @@ Item {
                 // Only track during an active press, not hover
                 if (!dockDelegate.down) return
 
-                // Capture initial press position on first move event
-                if (!_hasPressPos) {
-                    _pressMouseX = event.x
-                    _pressMouseY = event.y
-                    _hasPressPos = true
-                    return
-                }
+                if (!_hasPressPos) return
 
                 const dx = event.x - _pressMouseX
                 const dy = event.y - _pressMouseY
@@ -806,8 +849,11 @@ Item {
                     return
                 }
 
-                // Primed but drag not yet started → start on first movement
-                if (_dragPrimed && !root.dragActive) {
+                // Priming alone must never consume a click. Start dragging only
+                // after the pointer has crossed the same movement threshold
+                // measured from the actual press position.
+                if (_dragPrimed && !root.dragActive
+                        && dist2 > root.dragThreshold * root.dragThreshold) {
                     _longPressTriggered = true
                     const listPos = dockDelegate.mapToItem(listView, _pressMouseX, _pressMouseY)
                     const appId = dockDelegate.appToplevel?.originalAppId
@@ -833,6 +879,14 @@ Item {
                         root.endDrag()
                     }
                     root._suppressNextClick = true
+                    // RippleButton follows releaseAction with click() only for
+                    // a normal release. MouseArea cancellation calls the same
+                    // releaseAction without that click, so expire the guard if
+                    // it was not consumed synchronously.
+                    Qt.callLater(() => {
+                        if (root._suppressNextClick)
+                            root._suppressNextClick = false
+                    })
                     dockDelegate._longPressTriggered = false
                 }
             }

@@ -385,6 +385,4 @@ Scope {
             }
         }
     }
-
-    CountdownPopup {}
 }

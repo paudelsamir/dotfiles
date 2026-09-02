@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.modules.common
+import qs.modules.common.functions
 import qs.modules.common.widgets
 import qs.services
 
@@ -109,12 +110,12 @@ Item {
             }
         }
 
-        Rectangle { // Tabbar bottom border
+        Rectangle { // Tabbar bottom border — removed: only the colored active
+            // indicator should read (matches pomodoro). No full-width grey track.
             id: tabBarBottomBorder
             Layout.fillWidth: true
             height: 1
-            color: Appearance.angelEverywhere ? Appearance.angel.colCardBorder
-                : Appearance.auroraEverywhere ? "transparent" : Appearance.colors.colOutlineVariant
+            color: "transparent"
         }
 
         SwipeView {
@@ -135,6 +136,7 @@ Item {
                 listBottomPadding: root.fabSize + root.fabMargins * 2
                 emptyPlaceholderIcon: "check_circle"
                 emptyPlaceholderText: Translation.tr("Nothing here!")
+                emptyMascotPose: "todo-done"
                 taskList: Todo.list
                     .map(function(item, i) { return Object.assign({}, item, {originalIndex: i}); })
                     .filter(function(item) { return !item.done; })
@@ -143,6 +145,7 @@ Item {
                 listBottomPadding: root.fabSize + root.fabMargins * 2
                 emptyPlaceholderIcon: "checklist"
                 emptyPlaceholderText: Translation.tr("Finished tasks will go here")
+                emptyMascotPose: "success-celebrate"
                 taskList: Todo.list
                     .map(function(item, i) { return Object.assign({}, item, {originalIndex: i}); })
                     .filter(function(item) { return item.done; })
@@ -163,7 +166,7 @@ Item {
         anchors.bottom: fabButton.top
         anchors.bottomMargin: 8
         baseSize: 40
-        onClicked: Quickshell.execDetached(["xdg-open", Directories.todoTxtPath])
+        onClicked: ShellExec.execDetachedArgs(["xdg-open", Directories.todoTxtPath], "Open todo file")
         iconText: "edit_note"
     }
 
@@ -248,7 +251,7 @@ Item {
                     Layout.leftMargin: 16
                     Layout.rightMargin: 16
                     Layout.alignment: Qt.AlignLeft
-                    color: Appearance.m3colors.m3onSurface
+                    color: Appearance.colors.colOnSurface
                     font.pixelSize: Appearance.font.pixelSize.larger
                     text: Translation.tr("Add task")
                 }
@@ -259,12 +262,12 @@ Item {
                     Layout.leftMargin: 16
                     Layout.rightMargin: 16
                     padding: 10
-                    color: activeFocus ? Appearance.m3colors.m3onSurface : Appearance.m3colors.m3onSurfaceVariant
+                    color: activeFocus ? Appearance.colors.colOnSurface : Appearance.colors.colOnSurfaceVariant
                     renderType: Text.NativeRendering
-                    selectedTextColor: Appearance.m3colors.m3onSecondaryContainer
+                    selectedTextColor: Appearance.colors.colOnSecondaryContainer
                     selectionColor: Appearance.colors.colSecondaryContainer
                     placeholderText: Translation.tr("Task description")
-                    placeholderTextColor: Appearance.m3colors.m3outline
+                    placeholderTextColor: Appearance.colors.colOutline
                     focus: root.showAddDialog
                     onAccepted: dialog.addTask()
 
@@ -272,7 +275,7 @@ Item {
                         anchors.fill: parent
                         radius: Appearance.rounding.verysmall
                         border.width: 2
-                        border.color: todoInput.activeFocus ? Appearance.colors.colPrimary : Appearance.m3colors.m3outline
+                        border.color: todoInput.activeFocus ? Appearance.colors.colPrimary : Appearance.colors.colOutline
                         color: "transparent"
                     }
 

@@ -1,0 +1,54 @@
+[Behavior]
+ShowToolTips=true
+
+[DetailsMode]
+PreviewSize=48
+
+[General]
+GlobalViewProps=true
+LockPanels=false
+ShowFullPath=false
+ShowStatusBar=FullWidth
+SingleClick=true
+SortingChoice=CaseInsensitiveSorting
+UsePreviewPanel=false
+Version=202
+
+[IconsMode]
+IconSize=48
+PreviewSize=80
+
+[InformationPanel]
+previewsAutoPlay=true
+
+[KFileDialog Settings]
+Places Icons Auto-resize=false
+Places Icons Static Size=22
+
+[MainWindow]
+MenuBar=Disabled
+ToolBarVisibility=Single
+ToolBarsMovable=Enabled
+
+[MainWindow][Toolbar mainToolBar]
+ToolButtonStyle=IconOnly
+
+[PreviewSettings]
+Plugins=ffmpegthumbnailer,appimagethumbnail,audiothumbnail,avif,blenderthumbnail,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,heif,imagethumbnail,jpegthumbnail,jxl,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,mobithumbnail,opendocumentthumbnail,gsthumbnail,rawthumbnail,librsvg,svgthumbnail,ffmpegthumbs,gdk-pixbuf-thumbnailer,gsf-office
+
+[Settings]
+ShowDate=true
+ShowGroup=false
+ShowOwner=false
+ShowPermissions=false
+ShowSize=true
+ShowType=false
+SortOrder=0
+SortRole=Date
+ViewMode=2
+
+[TerminalPanel]
+KillTerminalOnClose=true
+
+[UiSettings]
+ColorScheme=MaterialYouDark_darker_titlebar

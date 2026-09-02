@@ -1,0 +1,124 @@
+/*
+ * GTK Colors - Generated with iNiR theming
+ * This file is overwritten when you change wallpaper
+ */
+
+@define-color accent_color #efbd8f;
+@define-color accent_fg_color #442b10;
+@define-color accent_bg_color #efbd8f;
+
+@define-color window_bg_color #19140f;
+@define-color window_fg_color #ece1d9;
+
+@define-color headerbar_bg_color #19140f;
+@define-color headerbar_fg_color #ece1d9;
+
+@define-color popover_bg_color #241e1a;
+@define-color popover_fg_color #d1c4ba;
+
+@define-color view_bg_color #19140f;
+@define-color view_fg_color #ece1d9;
+
+@define-color card_bg_color #1f1a16;
+@define-color card_fg_color #d1c4ba;
+
+@define-color sidebar_bg_color #19140f;
+@define-color sidebar_fg_color #ece1d9;
+@define-color sidebar_border_color #19140f;
+@define-color sidebar_backdrop_color #19140f;
+
+headerbar {
+    background-color: #19140f;
+    box-shadow: none;
+    border-bottom: none;
+}
+
+headerbar separator {
+    background-color: transparent;
+}
+
+.nautilus-window .sidebar,
+.nautilus-window sidebar,
+placessidebar,
+placessidebar list {
+    background-color: #19140f;
+    color: #ece1d9;
+    border-right: none;
+}
+
+placessidebar row {
+    background-color: transparent;
+    color: #ece1d9;
+}
+
+placessidebar row:hover {
+    background-color: #3C3128;
+}
+
+placessidebar row:selected,
+placessidebar row:selected:hover {
+    background-color: #514337;
+    color: #ece1d9;
+}
+
+placessidebar image {
+    color: inherit;
+}
+
+.view {
+    background-color: #19140f;
+}
+
+separator.sidebar {
+    background-color: transparent;
+    min-width: 0;
+}
+
+/* Context menus and popovers */
+popover,
+popover.background {
+    background-color: #241e1a;
+    color: #d1c4ba;
+}
+
+menu,
+.context-menu,
+.popup {
+    background-color: #241e1a;
+    color: #d1c4ba;
+}
+
+menuitem {
+    color: #d1c4ba;
+}
+
+menuitem:hover,
+menuitem:selected {
+    background-color: #3C3128;
+}
+
+menuitem:active,
+menuitem:selected:active {
+    background-color: #514337;
+    color: #ece1d9;
+}
+
+button:hover {
+    background-color: #3C3128;
+}
+
+button:active {
+    background-color: #514337;
+    color: #ece1d9;
+}
+
+entry:focus,
+textview:focus,
+spinbutton:focus {
+    border-color: alpha(#efbd8f, 0.60);
+    box-shadow: 0 0 0 1px alpha(#efbd8f, 0.25) inset;
+}
+
+menu separator {
+    background-color: alpha(#d1c4ba, 0.12);
+}

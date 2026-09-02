@@ -1,0 +1,39 @@
+{
+    "name": "Nepali Calendar",
+    "icon": "calendar_month",
+    "version": "2.0",
+    "author": "sam",
+    "description": "Bikram Sambat (Nepali) calendar with AD dates",
+    "category": "datetime",
+    "semanticPalette": true,
+    "main": "Nepali-calendar.qml",
+    "defaultConfig": {
+        "placementStrategy": "free",
+        "widgetScale": 100,
+        "widgetOpacity": 100,
+        "colorMode": "auto",
+        "dim": 0,
+        "showBackground": true,
+        "useBlur": false,
+        "showBorder": true,
+        "backgroundOpacity": 0.08,
+        "borderWidth": 1,
+        "borderOpacity": 0.12,
+        "cornerRadius": -1,
+        "x": 100,
+        "y": 100,
+        "contentWidth": 300,
+        "contentHeight": 350
+    },
+    "configKeys": {
+        "showBackground": { "type": "bool", "default": true, "label": "Show background" },
+        "useBlur": { "type": "bool", "default": false, "label": "Blur background" },
+        "showBorder": { "type": "bool", "default": true, "label": "Show border" },
+        "backgroundOpacity": { "type": "real", "default": 0.08, "min": 0, "max": 1, "step": 0.01, "label": "Background opacity" },
+        "borderWidth": { "type": "int", "default": 1, "min": 0, "max": 8, "label": "Border width" },
+        "borderOpacity": { "type": "real", "default": 0.12, "min": 0, "max": 1, "step": 0.01, "label": "Border opacity" },
+        "cornerRadius": { "type": "int", "default": -1, "min": -1, "max": 50, "label": "Corner radius" }
+    },
+    "resizableAxes": { "width": "contentWidth", "height": "contentHeight" },
+    "defaultSize": { "width": 300, "height": 350 }
+}
